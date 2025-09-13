@@ -298,4 +298,60 @@ export const SUPPORT_CIRCLES = [
     description: "Discuss challenges with internet and social media use, and find support for creating healthier digital habits.",
     icon: Wifi,
   },
-]
+];
+
+type Post = {
+    id: string;
+    author: { name: string; avatarColor: string; };
+    title: string;
+    content: string;
+    upvotes: number;
+    comments: {
+        author: { name: string; avatarColor: string; };
+        content: string;
+    }[];
+};
+
+type MockPosts = {
+  [key: string]: Post[];
+};
+
+export const MOCK_POSTS: MockPosts = {
+    "academic-stress": [
+        {
+            id: "post1",
+            author: { name: "Anonymous Panda", avatarColor: "bg-teal-200" },
+            title: "Feeling overwhelmed with final exams",
+            content: "I have three finals in two days and I feel like I can't possibly study enough for all of them. How do you all cope with this kind of pressure?",
+            upvotes: 12,
+            comments: [
+                { author: { name: "Anonymous Tiger", avatarColor: "bg-orange-200" }, content: "I feel you. I try to use the Pomodoro Technique - 25 minutes of focused study, then a 5-minute break. It helps me not get burned out." },
+                { author: { name: "Anonymous Koala", avatarColor: "bg-gray-200" }, content: "Make sure you're getting enough sleep! Pulling an all-nighter is usually less effective than getting a good night's rest." },
+            ]
+        },
+        {
+            id: "post2",
+            author: { name: "Anonymous Giraffe", avatarColor: "bg-yellow-200" },
+            title: "Fear of failure is paralyzing me",
+            content: "I'm so scared of not getting the grades I need to get into the university I want. Sometimes the fear is so strong I can't even start studying.",
+            upvotes: 8,
+            comments: [
+                { author: { name: "Anonymous Panda", avatarColor: "bg-teal-200" }, content: "I relate to this so much. It helps me to remember that my grades don't define my worth as a person." },
+            ]
+        }
+    ],
+    "family-expectations": [
+        {
+            id: "post3",
+            author: { name: "Anonymous Wolf", avatarColor: "bg-slate-300" },
+            title: "My parents have my whole life planned out for me",
+            content: "My parents expect me to become an engineer, but I'm really passionate about art. I don't know how to tell them without disappointing them.",
+            upvotes: 25,
+            comments: [
+                { author: { name: "Anonymous Fox", avatarColor: "bg-red-200" }, content: "That's tough. Maybe you could try showing them your art and how much it means to you? Or suggest a compromise, like minoring in art?" },
+                 { author: { name: "Anonymous Deer", avatarColor: "bg-lime-200" }, content: "Remember it's your life to live. It's hard, but being true to yourself is so important in the long run." },
+            ]
+        }
+    ],
+    "internet-addiction": [],
+};
