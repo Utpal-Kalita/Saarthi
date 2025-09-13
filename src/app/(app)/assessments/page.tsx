@@ -12,6 +12,12 @@ const assessments = [
         time: "2-5 minutes"
     },
     {
+        name: "Internet Addiction Test (IAT)",
+        description: "A 20-question test to assess the severity of internet addiction.",
+        href: "/assessments/iat",
+        time: "5-10 minutes"
+    },
+    {
         name: "BDI (Beck Depression Inventory)",
         description: "A 21-question multiple-choice self-report inventory, one of the most widely used psychometric tests for measuring the severity of depression.",
         href: "#",
@@ -48,7 +54,7 @@ export default function AssessmentsPage() {
         <ShieldAlert className="h-4 w-4" />
         <AlertTitle>Important Disclaimer</AlertTitle>
         <AlertDescription>
-          The results of these self-assessments are for informational purposes only. They are not a diagnosis. Please consult a qualified mental health professional for an accurate diagnosis and treatment plan.
+         These assessments are for self-awareness only and are not a substitute for professional diagnosis. If you are concerned about your mental health, please speak to a professional. This disclaimer is available in English and Assamese.
         </AlertDescription>
       </Alert>
 
