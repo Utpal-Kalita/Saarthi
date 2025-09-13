@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { BotMessageSquare, NotebookText, HeartPulse, Library } from "lucide-react";
+import { BotMessageSquare, NotebookText, HeartPulse, Library, Users } from "lucide-react";
 
 const features = [
   {
@@ -31,6 +31,13 @@ const features = [
     color: "text-red-500",
   },
   {
+    title: "Support Circles",
+    description: "Connect with peers in a safe, anonymous, and moderated space.",
+    href: "/support-circles",
+    icon: Users,
+    color: "text-blue-500",
+  },
+  {
     title: "Resources",
     description: "Explore articles and guides for self-care and mental health.",
     href: "/resources",
@@ -46,7 +53,7 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold tracking-tight">Welcome to Saarthi</h1>
         <p className="text-muted-foreground">Your personal space for mental well-being. What would you like to do today?</p>
       </div>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {features.map((feature) => (
           <Link href={feature.href} key={feature.title} className="group">
             <Card className="h-full transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 bg-card hover:border-primary/50">

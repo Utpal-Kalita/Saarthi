@@ -1,3 +1,5 @@
+import { BookOpen, Scale, Wifi } from 'lucide-react';
+
 export const PHQ9_QUESTIONS = [
   {
     question: "Little interest or pleasure in doing things",
@@ -276,3 +278,24 @@ export const getSdqInterpretation = (scores: { [key: string]: number }) => {
     
     return interpretations;
 };
+
+export const SUPPORT_CIRCLES = [
+  {
+    id: "academic-stress",
+    title: "Managing Academic & Exam Stress",
+    description: "A space to discuss the pressures of school, exams, and future planning with peers who get it.",
+    icon: BookOpen,
+  },
+  {
+    id: "family-expectations",
+    title: "Navigating Family Expectations",
+    description: "Share experiences and strategies for handling family pressures and cultural expectations.",
+    icon: Scale,
+  },
+  {
+    id: "internet-addiction",
+    title: "Building a Healthy Relationship with the Internet",
+    description: "Discuss challenges with internet and social media use, and find support for creating healthier digital habits.",
+    icon: Wifi,
+  },
+]
