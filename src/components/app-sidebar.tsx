@@ -23,8 +23,8 @@ export function AppSidebar() {
           key={href}
           href={href}
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary',
-            (pathname === href || (href !== '/dashboard' && pathname.startsWith(href))) && 'bg-muted text-primary'
+            'flex items-center gap-3 rounded-lg px-3 py-3 text-muted-foreground transition-all hover:text-primary hover:bg-primary/10',
+            (pathname === href || (href !== '/dashboard' && pathname.startsWith(href))) && 'bg-primary/10 text-primary font-semibold'
           )}
         >
           <Icon className="h-4 w-4" />

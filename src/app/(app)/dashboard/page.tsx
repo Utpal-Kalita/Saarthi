@@ -14,7 +14,7 @@ const features = [
     description: "Talk through your feelings with an empathetic AI companion.",
     href: "/chat",
     icon: BotMessageSquare,
-    color: "text-blue-500",
+    color: "text-primary",
   },
   {
     title: "Mood Journal",
@@ -43,21 +43,21 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-headline">Welcome to SarvUday</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Welcome to SarvUday</h1>
         <p className="text-muted-foreground">Your personal space for mental well-being. What would you like to do today?</p>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
         {features.map((feature) => (
           <Link href={feature.href} key={feature.title} className="group">
-            <Card className="h-full transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 bg-card/50 hover:bg-card">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+            <Card className="h-full transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 bg-card hover:border-primary/50">
+              <CardHeader>
+                 <feature.icon className={`h-8 w-8 mb-2 ${feature.color}`} />
+                <CardTitle className="text-lg font-semibold">
                   {feature.title}
                 </CardTitle>
-                <feature.icon className={`h-5 w-5 ${feature.color}`} />
               </CardHeader>
               <CardContent>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   {feature.description}
                 </p>
               </CardContent>

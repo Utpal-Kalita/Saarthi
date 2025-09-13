@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useTransition } from "react";
-import { CornerDownLeft, Loader2, User, Bot } from "lucide-react";
+import { CornerDownLeft, Loader2, User, Bot, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -70,15 +70,15 @@ export function ChatInterface() {
       />
       <div className="relative flex flex-col h-full bg-card rounded-xl shadow-sm border">
         <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
-          <div className="space-y-4 pr-4">
+          <div className="space-y-6 pr-4">
             {messages.length === 0 && (
                 <div className="flex items-start gap-4 p-4 text-sm">
-                    <Avatar className="h-8 w-8 border">
-                        <AvatarFallback><Bot size={16} /></AvatarFallback>
+                    <Avatar className="h-9 w-9 border bg-primary/10 text-primary">
+                        <AvatarFallback><Sparkles size={20} /></AvatarFallback>
                     </Avatar>
                     <div className="grid gap-1.5 flex-1">
                         <p className="font-semibold">SarvUday AI</p>
-                        <div className="prose prose-sm text-muted-foreground bg-secondary/50 p-3 rounded-lg">
+                        <div className="prose prose-sm text-foreground bg-white p-3 rounded-lg shadow-sm">
                         Hello! I'm here to listen and support you. How are you feeling today?
                         </div>
                     </div>
@@ -93,9 +93,9 @@ export function ChatInterface() {
                 )}
               >
                 {message.role === "assistant" && (
-                  <Avatar className="h-8 w-8 border">
+                  <Avatar className="h-9 w-9 border bg-primary/10 text-primary">
                     <AvatarFallback>
-                      <Bot size={16} />
+                      <Sparkles size={20} />
                     </AvatarFallback>
                   </Avatar>
                 )}
@@ -103,29 +103,36 @@ export function ChatInterface() {
                    {message.role === "assistant" && <p className="font-semibold">SarvUday AI</p>}
                   <div
                     className={cn(
-                      "prose prose-sm text-foreground p-3 rounded-lg",
+                      "prose prose-sm text-foreground p-3 rounded-lg shadow-sm",
                       message.role === "user"
-                        ? "bg-primary/20"
-                        : "bg-secondary/50"
+                        ? "bg-muted text-foreground"
+                        : "bg-white"
                     )}
                   >
                     {message.content}
                   </div>
                 </div>
                 {message.role === "user" && (
-                   <Avatar className="h-8 w-8 border">
+                   <Avatar className="h-9 w-9 border">
                     <AvatarFallback>
-                      <User size={16} />
+                      <User size={18} />
                     </AvatarFallback>
                   </Avatar>
                 )}
               </div>
             ))}
             {isPending && (
-              <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Thinking...</span>
-              </div>
+               <div className="flex items-start gap-4 p-4 text-sm">
+                    <Avatar className="h-9 w-9 border bg-primary/10 text-primary">
+                        <AvatarFallback><Sparkles size={20} /></AvatarFallback>
+                    </Avatar>
+                    <div className="grid gap-1.5 flex-1 pt-2">
+                      <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span>Thinking...</span>
+                      </div>
+                    </div>
+                </div>
             )}
           </div>
         </ScrollArea>
@@ -138,13 +145,13 @@ export function ChatInterface() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message here..."
-              className="pr-12 text-base"
+              className="pr-12 text-base rounded-full"
               disabled={isPending}
             />
             <Button
               type="submit"
               size="icon"
-              className="absolute top-1/2 right-2 -translate-y-1/2 h-7 w-7"
+              className="absolute top-1/2 right-2 -translate-y-1/2 h-8 w-8 rounded-full"
               disabled={!input.trim() || isPending}
             >
               <CornerDownLeft className="h-4 w-4" />
