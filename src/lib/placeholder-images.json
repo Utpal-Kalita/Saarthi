@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "1",
+      "description": "A guide to understanding and managing academic stress.",
+      "imageUrl": "https://picsum.photos/seed/stress/600/400",
+      "imageHint": "calm student"
+    },
+    {
+      "id": "2",
+      "description": "Learn techniques for mindfulness and staying present.",
+      "imageUrl": "https://picsum.photos/seed/mindfulness/600/400",
+      "imageHint": "peaceful meditation"
+    },
+    {
+      "id": "3",
+      "description": "Tips for a healthy relationship with technology and social media.",
+      "imageUrl": "https://picsum.photos/seed/digital/600/400",
+      "imageHint": "digital detox"
+    },
+    {
+      "id": "4",
+      "description": "How to build supportive and healthy family relationships.",
+      "imageUrl": "https://picsum.photos/seed/family/600/400",
+      "imageHint": "happy family"
+    }
+  ]
 }
