@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BotMessageSquare, NotebookText, HeartPulse, Library, LayoutDashboard, Users, UserCog, Building } from 'lucide-react';
+import { BotMessageSquare, NotebookText, HeartPulse, Library, LayoutDashboard, Users, UserCog, Building, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from './ui/separator';
 
@@ -13,6 +13,7 @@ const mainNavItems = [
   { href: '/assessments', icon: HeartPulse, label: 'Self-Assessments' },
   { href: '/support-circles', icon: Users, label: 'Support Circles' },
   { href: '/resources', icon: Library, label: 'Resources' },
+  { href: '/challenges', icon: Trophy, label: 'Challenges' },
 ];
 
 const secondaryNavItems = [
