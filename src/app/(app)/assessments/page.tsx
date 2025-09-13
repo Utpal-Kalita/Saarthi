@@ -18,6 +18,12 @@ const assessments = [
         time: "5-10 minutes"
     },
     {
+        name: "SDQ (Strengths and Difficulties Questionnaire)",
+        description: "A brief behavioural screening questionnaire for children and adolescents aged 4-17.",
+        href: "/assessments/sdq",
+        time: "5-10 minutes",
+    },
+    {
         name: "BDI (Beck Depression Inventory)",
         description: "A 21-question multiple-choice self-report inventory, one of the most widely used psychometric tests for measuring the severity of depression.",
         href: "#",
@@ -31,13 +37,6 @@ const assessments = [
         time: "15-20 minutes",
         disabled: true,
     },
-     {
-        name: "SDQ (Strengths and Difficulties Questionnaire)",
-        description: "A brief behavioural screening questionnaire for children and adolescents aged 2-17.",
-        href: "#",
-        time: "5 minutes",
-        disabled: true,
-    }
 ]
 
 export default function AssessmentsPage() {

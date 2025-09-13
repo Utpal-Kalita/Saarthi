@@ -189,3 +189,90 @@ export const getIatInterpretation = (score: number) => {
     suggestion: "Could not calculate a valid score. Please complete the assessment.",
   };
 };
+
+
+export const SDQ_QUESTIONS = [
+    // Emotional Symptoms
+    { question: "I get a lot of headaches, stomach-aches or sickness", type: 'emotional', scoreReverse: false },
+    { question: "I worry a lot", type: 'emotional', scoreReverse: false },
+    { question: "I am often unhappy, down-hearted or tearful", type: 'emotional', scoreReverse: false },
+    { question: "I am nervous in new situations, I easily lose confidence", type: 'emotional', scoreReverse: false },
+    { question: "I have many fears, I am easily scared", type: 'emotional', scoreReverse: false },
+
+    // Conduct Problems
+    { question: "I get very angry and often lose my temper", type: 'conduct', scoreReverse: false },
+    { question: "I am generally obedient, I usually do what adults request", type: 'conduct', scoreReverse: true },
+    { question: "I fight a lot. I can make other people do what I want", type: 'conduct', scoreReverse: false },
+    { question: "I am often accused of lying or cheating", type: 'conduct', scoreReverse: false },
+    { question: "I take things that are not mine from home, school or elsewhere", type: 'conduct', scoreReverse: false },
+
+    // Hyperactivity/Inattention
+    { question: "I am restless, I can't stay still for long", type: 'hyperactivity', scoreReverse: false },
+    { question: "I am constantly fidgeting or squirming", type: 'hyperactivity', scoreReverse: false },
+    { question: "I get easily distracted, I find it difficult to concentrate", type: 'hyperactivity', scoreReverse: false },
+    { question: "I think before I do things", type: 'hyperactivity', scoreReverse: true },
+    { question: "I finish the work I'm doing. My attention is good", type: 'hyperactivity', scoreReverse: true },
+
+    // Peer Relationship Problems
+    { question: "I am rather solitary, I tend to play alone", type: 'peer', scoreReverse: false },
+    { question: "I have at least one good friend", type: 'peer', scoreReverse: true },
+    { question: "I am generally liked by other people my age", type: 'peer', scoreReverse: true },
+    { question: "Other people my age generally pick on me or bully me", type: 'peer', scoreReverse: false },
+    { question: "I get on better with adults than with people my own age", type: 'peer', scoreReverse: false },
+
+    // Prosocial Scale
+    { question: "I try to be nice to other people. I care about their feelings", type: 'prosocial', scoreReverse: false },
+    { question: "I am helpful if someone is hurt, upset or feeling ill", type: 'prosocial', scoreReverse: false },
+    { question: "I share readily with others (for example, games, treats, pens)", type: 'prosocial', scoreReverse: false },
+    { question: "I am kind to younger children", type: 'prosocial', scoreReverse: false },
+    { question: "I often volunteer to help others (parents, teachers, other children)", type: 'prosocial', scoreReverse: false },
+];
+
+export const getSdqInterpretation = (scores: { [key: string]: number }) => {
+    const interpretations: { [key: string]: { label: string, score: number, result: string, suggestion: string } } = {};
+
+    const getResult = (score: number, thresholds: number[], isProsocial = false) => {
+        if (isProsocial) {
+            if (score <= 4) return { result: 'Needs Attention', suggestion: 'May have some difficulties in social skills. Practicing empathy and cooperation could be helpful.' };
+            if (score <= 5) return { result: 'Slightly Lower', suggestion: 'Has relatively good social skills but with some room for improvement.' };
+            return { result: 'Strength', suggestion: 'Shows strong prosocial behaviors and skills.' };
+        } else {
+            if (score <= thresholds[0]) return { result: 'Close to Average', suggestion: 'Indicates a low level of concern in this area.' };
+            if (score <= thresholds[1]) return { result: 'Slightly Raised', suggestion: 'Some concerns may be present. It might be helpful to talk about these feelings or behaviors.' };
+            return { result: 'High', suggestion: 'Significant concerns may be present. It is recommended to discuss these with a parent, teacher, or mental health professional.' };
+        }
+    };
+
+    interpretations['emotional'] = {
+        label: "Emotional Symptoms",
+        score: scores.emotional,
+        ...getResult(scores.emotional, [4, 5])
+    };
+    interpretations['conduct'] = {
+        label: "Conduct Problems",
+        score: scores.conduct,
+        ...getResult(scores.conduct, [3, 4])
+    };
+    interpretations['hyperactivity'] = {
+        label: "Hyperactivity/Inattention",
+        score: scores.hyperactivity,
+        ...getResult(scores.hyperactivity, [5, 6])
+    };
+    interpretations['peer'] = {
+        label: "Peer Relationship Problems",
+        score: scores.peer,
+        ...getResult(scores.peer, [3, 4])
+    };
+    interpretations['prosocial'] = {
+        label: "Prosocial Behavior",
+        score: scores.prosocial,
+        ...getResult(scores.prosocial, [], true)
+    };
+    interpretations['total'] = {
+        label: "Total Difficulties Score",
+        score: scores.total,
+        ...getResult(scores.total, [13, 16])
+    };
+    
+    return interpretations;
+};
