@@ -1,15 +1,15 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Video, Users, FileText } from "lucide-react";
+import { BookOpen, Video, Users, FileText, Ear } from "lucide-react";
 
 const teacherModules = [
   {
-    title: "Understanding Adolescent Mental Health",
+    title: "Understanding Adolescent Mental Health Vocabulary",
     description: "Learn the common vocabulary and concepts related to youth mental wellness.",
     icon: BookOpen,
   },
   {
-    title: "Creating a Mentally Healthy Classroom",
+    title: "Creating a Mentally Healthy Classroom Environment",
     description: "Strategies for fostering a supportive and open environment for students.",
     icon: Users,
   },
@@ -18,8 +18,13 @@ const teacherModules = [
     description: "Identify subtle behavioral changes that may indicate a student is struggling.",
     icon: FileText,
   },
+   {
+    title: "Effective Communication & Empathetic Listening",
+    description: "Learn techniques to listen and validate your child's feelings without judgment.",
+    icon: Ear,
+  },
   {
-    title: "Referral Protocols & Using Saarthi",
+    title: "Clear Referral Protocols for School Counselors & Saarthi",
     description: "Understand the clear steps for escalating concerns to counselors and leveraging the platform.",
     icon: Video,
   },
