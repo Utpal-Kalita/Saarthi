@@ -13,7 +13,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
               <BrainCircuit className="h-6 w-6 text-primary" />
-              <span className="">SarvUday Self-Care</span>
+              <span className="">Saarthi</span>
             </Link>
           </div>
           <AppSidebar />
@@ -39,7 +39,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   className="flex items-center gap-2 text-lg font-semibold mb-4"
                 >
                   <BrainCircuit className="h-6 w-6 text-primary" />
-                  <span className="sr-only">SarvUday</span>
+                  <span className="sr-only">Saarthi</span>
                 </Link>
                 <AppSidebar />
               </nav>

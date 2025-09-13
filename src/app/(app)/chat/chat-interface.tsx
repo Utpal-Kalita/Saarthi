@@ -77,7 +77,7 @@ export function ChatInterface() {
                         <AvatarFallback><Sparkles size={20} /></AvatarFallback>
                     </Avatar>
                     <div className="grid gap-1.5 flex-1">
-                        <p className="font-semibold">SarvUday AI</p>
+                        <p className="font-semibold">Saarthi AI</p>
                         <div className="prose prose-sm text-foreground bg-white p-3 rounded-lg shadow-sm">
                         Hello! I'm here to listen and support you. How are you feeling today?
                         </div>
@@ -100,7 +100,7 @@ export function ChatInterface() {
                   </Avatar>
                 )}
                 <div className={cn("grid gap-1.5 flex-1 max-w-[80%]", message.role === "user" ? "text-right" : "")}>
-                   {message.role === "assistant" && <p className="font-semibold">SarvUday AI</p>}
+                   {message.role === "assistant" && <p className="font-semibold">Saarthi AI</p>}
                   <div
                     className={cn(
                       "prose prose-sm text-foreground p-3 rounded-lg shadow-sm",
