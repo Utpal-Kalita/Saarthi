@@ -1,4 +1,4 @@
-import { BookOpen, Scale, Wifi } from 'lucide-react';
+import { BookOpen, Scale, Wifi, Award, Bike, Star } from 'lucide-react';
 
 export const PHQ9_QUESTIONS = [
   {
@@ -355,3 +355,65 @@ export const MOCK_POSTS: MockPosts = {
     ],
     "internet-addiction": [],
 };
+
+export const CHALLENGES = [
+  {
+    id: "gratitude-journal",
+    title: "7-Day Gratitude Journal Challenge",
+    description: "Discover the positive impact of gratitude by jotting down three things you're thankful for each day for a week.",
+    icon: Award,
+    status: "Join Now",
+  },
+  {
+    id: "mindful-movement",
+    title: "Mindful Movement Week",
+    description: "Connect your mind and body. Dedicate 15 minutes each day to a mindful activity like walking, stretching, or yoga.",
+    icon: Bike,
+    status: "Join Now",
+  },
+  {
+    id: "digital-detox",
+    title: "Digital Detox Weekend",
+    description: "Take a break from the noise. Challenge yourself to reduce screen time for a weekend to recharge and reconnect with the world offline.",
+    icon: Star,
+    status: "Coming Soon",
+    disabled: true,
+  },
+];
+
+
+type ChallengeDetails = {
+    [key: string]: {
+        days: {
+            day: number;
+            title: string;
+            task: string;
+            instruction: string;
+        }[];
+    }
+}
+
+export const CHALLENGE_DETAILS: ChallengeDetails = {
+    "gratitude-journal": {
+        days: [
+            { day: 1, title: "A Person You're Grateful For", task: "Write down three things you appreciate about a specific person in your life.", instruction: "Think about a friend, family member, or teacher. What makes them special to you?" },
+            { day: 2, title: "Something Simple You Enjoyed", task: "Note three simple pleasures from your day.", instruction: "This could be the taste of your morning tea, a song you heard, or the feeling of sunshine." },
+            { day: 3, title: "A Skill or Talent You Have", task: "List three things you are good at, big or small.", instruction: "Acknowledge your own strengths, whether it's being a good listener, solving a puzzle, or making a great meal." },
+            { day: 4, title: "Something in Nature", task: "Write down three things in the natural world you find beautiful.", instruction: "Look out your window or think about a park. Notice the details of a cloud, a tree, or a flower." },
+            { day: 5, title: "A Challenge You Overcame", task: "Recall a past difficulty and list three things you learned from it.", instruction: "Focus on your resilience and strength. How did that experience help you grow?" },
+            { day: 6, title: "Something That Made You Laugh", task: "Jot down three things that brought a smile to your face recently.", instruction: "It could be a joke, a memory, or a funny video. Embrace the joy." },
+            { day: 7, title: "Looking Ahead", task: "Write down three things you are looking forward to in the future.", instruction: "Cultivate optimism by focusing on positive things on the horizon, no matter how small." },
+        ]
+    },
+    "mindful-movement": {
+        days: [
+            { day: 1, title: "Mindful Walking", task: "Go for a 15-minute walk without any distractions (no phone, no music).", instruction: "Pay attention to the sensation of your feet on the ground, the air on your skin, and the sounds around you." },
+            { day: 2, title: "Gentle Stretching", task: "Spend 15 minutes doing slow, intentional stretches.", instruction: "Focus on how each muscle feels as you stretch. Breathe deeply into any areas of tension." },
+            { day: 3, title: "Body Scan Meditation", task: "Lie down comfortably and spend 15 minutes mentally scanning your body from head to toe.", instruction: "Notice any sensations (warmth, tingling, tightness) without judgment. Simply observe." },
+            { day: 4, title: "Mindful Breathing", task: "Sit in a quiet place for 15 minutes and focus solely on your breath.", instruction: "Notice the rise and fall of your chest and abdomen. When your mind wanders, gently guide it back to your breath." },
+            { day: 5, title: "Yoga Flow", task: "Follow a gentle 15-minute beginner's yoga video online.", instruction: "Connect your breath with each movement. The goal is not perfection, but awareness." },
+            { day: 6, title: "Dancing", task: "Put on your favorite song and dance for 15 minutes.", instruction: "Move your body freely in whatever way feels good. Let go of self-consciousness and just enjoy the movement." },
+            { day: 7, title: "Mindful Observation", task: "Sit by a window for 15 minutes and simply observe what you see.", instruction: "Watch the clouds, the trees, or people passing by without creating stories. Just see what is there." },
+        ]
+    }
+}

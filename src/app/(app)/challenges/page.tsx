@@ -1,28 +1,8 @@
+import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Award, Bike, Star } from "lucide-react";
-
-const challenges = [
-  {
-    title: "7-Day Gratitude Journal Challenge",
-    description: "Discover the positive impact of gratitude by jotting down three things you're thankful for each day for a week.",
-    icon: Award,
-    status: "Join Now",
-  },
-  {
-    title: "Mindful Movement Week",
-    description: "Connect your mind and body. Dedicate 15 minutes each day to a mindful activity like walking, stretching, or yoga.",
-    icon: Bike,
-    status: "Join Now",
-  },
-  {
-    title: "Digital Detox Weekend",
-    description: "Take a break from the noise. Challenge yourself to reduce screen time for a weekend to recharge and reconnect with the world offline.",
-    icon: Star,
-    status: "Coming Soon",
-    disabled: true,
-  },
-];
+import { CHALLENGES } from "@/lib/constants";
 
 export default function ChallengesPage() {
   return (
@@ -35,7 +15,7 @@ export default function ChallengesPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {challenges.map((challenge) => (
+        {CHALLENGES.map((challenge) => (
           <Card key={challenge.title} className="flex flex-col">
             <CardHeader>
               <div className="flex items-center gap-3 mb-2">
@@ -50,9 +30,15 @@ export default function ChallengesPage() {
               {/* Future content like progress can go here */}
             </CardContent>
             <CardFooter>
-              <Button className="w-full" disabled={challenge.disabled}>
-                {challenge.status}
-              </Button>
+               {challenge.disabled ? (
+                 <Button className="w-full" disabled>
+                    {challenge.status}
+                </Button>
+               ) : (
+                <Button asChild className="w-full">
+                    <Link href={`/challenges/${challenge.id}`}>{challenge.status}</Link>
+                </Button>
+               )}
             </CardFooter>
           </Card>
         ))}
