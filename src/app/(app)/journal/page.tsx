@@ -1,4 +1,5 @@
 import { JournalForm } from "./journal-form";
+import { Label } from "@/components/ui/label";
 
 export default function JournalPage() {
   return (
@@ -6,7 +7,7 @@ export default function JournalPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight font-headline">Mood Journal</h1>
         <p className="text-muted-foreground">
-          Write down your thoughts and feelings. Our AI will help you find patterns and insights.
+          Check in with yourself. Select a mood and write down your thoughts to get AI-powered insights.
         </p>
       </div>
       <JournalForm />
