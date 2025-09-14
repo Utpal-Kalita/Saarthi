@@ -9,7 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Phone } from "lucide-react";
+import { Phone, AlertTriangle } from "lucide-react";
 
 interface CrisisAlertProps {
   open: boolean;
@@ -24,21 +24,24 @@ export function CrisisAlert({ open, helplineMessage }: CrisisAlertProps) {
   return (
     <AlertDialog open={open}>
       <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Support is available</AlertDialogTitle>
-          <AlertDialogDescription>
+        <AlertDialogHeader className="text-center">
+            <div className="mx-auto bg-destructive/10 p-3 rounded-full w-fit">
+                 <AlertTriangle className="h-8 w-8 text-destructive" />
+            </div>
+          <AlertDialogTitle className="text-xl font-bold pt-2">Help is Available Right Now</AlertDialogTitle>
+          <AlertDialogDescription className="text-base">
             {helplineMessage ||
-              "It sounds like you are going through a difficult time. Please reach out for help. You can connect with people who can support you by calling or texting."}
+              "It sounds like you are going through a very difficult time. Please reach out to connect with people who can support you by calling or texting."}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="bg-destructive/10 border-l-4 border-destructive text-destructive-foreground p-4 rounded-md">
+        <div className="bg-destructive/10 border-l-4 border-destructive text-destructive-foreground p-4 rounded-md text-center my-4">
           <h3 className="font-bold">Tele-MANAS Helpline</h3>
-          <p>A national 24/7 helpline for mental health support in India.</p>
-          <p className="font-bold text-lg mt-2">14416</p>
+          <p className="text-sm">A national 24/7 helpline for mental health support in India.</p>
+          <p className="font-bold text-2xl mt-2 tracking-widest">14416</p>
         </div>
         <AlertDialogFooter>
-          <AlertDialogAction onClick={handleCall} className="w-full bg-green-600 hover:bg-green-700 text-white">
-            <Phone className="mr-2 h-4 w-4" /> Call 14416
+          <AlertDialogAction onClick={handleCall} className="w-full bg-green-600 hover:bg-green-700 text-white h-12 text-lg">
+            <Phone className="mr-2 h-5 w-5" /> Call 14416 Now
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

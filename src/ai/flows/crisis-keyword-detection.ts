@@ -18,13 +18,13 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const CrisisKeywordDetectionInputSchema = z.object({
-  userInput: z.string().describe('The user input text to analyze.'),
+  userInput: z.string().describe('The user input text to analyze for crisis indicators.'),
 });
 export type CrisisKeywordDetectionInput = z.infer<typeof CrisisKeywordDetectionInputSchema>;
 
 const CrisisKeywordDetectionOutputSchema = z.object({
   isCrisis: z.boolean().describe('Whether the user input indicates a crisis situation.'),
-  helplineMessage: z.string().optional().describe('A message providing the Tele-MANAS helpline number if a crisis is detected.'),
+  helplineMessage: z.string().optional().describe('An empathetic message providing the Tele-MANAS helpline number if a crisis is detected.'),
 });
 export type CrisisKeywordDetectionOutput = z.infer<typeof CrisisKeywordDetectionOutputSchema>;
 
@@ -37,9 +37,17 @@ const prompt = ai.definePrompt({
   name: 'crisisKeywordDetectionPrompt',
   input: {schema: CrisisKeywordDetectionInputSchema},
   output: {schema: CrisisKeywordDetectionOutputSchema},
-  prompt: `You are a crisis detection AI. Your task is to analyze the user input and determine if it indicates a crisis situation, such as thoughts of self-harm or suicide.
+  prompt: `You are a highly sensitive AI safety system. Your primary function is to detect any indication of immediate crisis in user input.
+  
+  Analyze the user's text for keywords, phrases, or sentiment related to:
+  - Self-harm
+  - Suicidal ideation or intent
+  - Severe distress or hopelessness
+  - Abuse or immediate danger
 
-  Respond with JSON. The isCrisis field should be true if the input suggests a crisis, and false otherwise. If isCrisis is true, also populate the helplineMessage field with a message that includes India's Tele-MANAS helpline number (14416).
+  If any of these indicators are present, you MUST set 'isCrisis' to true. Be overly cautious; it is better to flag a potential crisis than to miss one.
+  
+  If 'isCrisis' is true, you MUST also provide an empathetic and direct 'helplineMessage' that includes India's Tele-MANAS helpline number (14416).
 
   User Input: {{{userInput}}}`,
 });
