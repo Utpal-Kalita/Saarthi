@@ -32,17 +32,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <span className="sr-only">Toggle navigation menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="flex flex-col bg-card">
-              <nav className="grid gap-2 text-lg font-medium">
+            <SheetContent side="left" className="flex flex-col bg-card p-0">
+               <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                 <Link
                   href="/dashboard"
-                  className="flex items-center gap-2 text-lg font-semibold mb-4"
+                  className="flex items-center gap-2 text-lg font-semibold"
                 >
                   <BrainCircuit className="h-6 w-6 text-primary" />
-                  <span className="sr-only">Saarthi</span>
+                  <span>Saarthi</span>
                 </Link>
+              </div>
+              <div className="overflow-y-auto">
                 <AppSidebar />
-              </nav>
+              </div>
             </SheetContent>
           </Sheet>
           <div className="w-full flex-1">

@@ -417,3 +417,33 @@ export const CHALLENGE_DETAILS: ChallengeDetails = {
         ]
     }
 }
+
+export const THERAPISTS = [
+  {
+    id: "dr-anju-sharma",
+    name: "Dr. Anju Sharma",
+    title: "Clinical Psychologist",
+    imageId: "therapist1",
+    specialties: ["Cognitive Behavioral Therapy (CBT)", "Anxiety & Stress Management", "Adolescent Psychology"],
+    languages: ["English", "Hindi", "Assamese"],
+    bio: "Dr. Anju Sharma has over 12 years of experience working with adolescents and young adults facing academic pressure and anxiety. She believes in a collaborative approach to therapy, empowering her clients with practical tools to navigate life's challenges. Her sessions are a safe space for exploration and growth."
+  },
+  {
+    id: "mr-rohit-das",
+    name: "Mr. Rohit Das",
+    title: "Counseling Psychologist",
+    imageId: "therapist2",
+    specialties: ["Mindfulness-Based Stress Reduction (MBSR)", "Relationship Counseling", "Digital Wellness"],
+    languages: ["English", "Hindi"],
+    bio: "Mr. Rohit Das specializes in helping young professionals manage work-life balance and build healthier relationships with technology. He incorporates mindfulness techniques to help clients develop greater self-awareness and resilience against the stressors of modern life."
+  },
+  {
+    id: "dr-priya-singh",
+    name: "Dr. Priya Singh",
+    title: "Psychiatrist",
+    imageId: "therapist3",
+    specialties: ["Depression & Mood Disorders", "Family Therapy", "Pharmacotherapy"],
+    languages: ["English", "Hindi", "Bengali"],
+    bio: "Dr. Priya Singh offers a comprehensive approach to mental wellness, combining therapy with medical expertise when needed. She is passionate about de-stigmatizing mental health in families and provides a compassionate, evidence-based approach to treatment for a wide range of mood disorders."
+  }
+];

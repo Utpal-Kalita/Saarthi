@@ -23,6 +23,24 @@
       "description": "How to build supportive and healthy family relationships.",
       "imageUrl": "https://picsum.photos/seed/family/600/400",
       "imageHint": "happy family"
+    },
+    {
+      "id": "therapist1",
+      "description": "Profile picture of Dr. Anju Sharma, a clinical psychologist.",
+      "imageUrl": "https://picsum.photos/seed/therapist1/400/400",
+      "imageHint": "professional woman"
+    },
+    {
+      "id": "therapist2",
+      "description": "Profile picture of Mr. Rohit Das, a counseling psychologist.",
+      "imageUrl": "https://picsum.photos/seed/therapist2/400/400",
+      "imageHint": "professional man"
+    },
+    {
+      "id": "therapist3",
+      "description": "Profile picture of Dr. Priya Singh, a psychiatrist.",
+      "imageUrl": "https://picsum.photos/seed/therapist3/400/400",
+      "imageHint": "friendly woman"
     }
   ]
 }

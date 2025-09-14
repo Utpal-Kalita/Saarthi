@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BotMessageSquare, NotebookText, HeartPulse, Library, LayoutDashboard, Users, UserCog, Building, Trophy } from 'lucide-react';
+import { BotMessageSquare, NotebookText, HeartPulse, Library, LayoutDashboard, Users, UserCog, Building, Trophy, Stethoscope } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from './ui/separator';
 
@@ -12,6 +12,7 @@ const mainNavItems = [
   { href: '/journal', icon: NotebookText, label: 'Mood Journal' },
   { href: '/assessments', icon: HeartPulse, label: 'Self-Assessments' },
   { href: '/support-circles', icon: Users, label: 'Support Circles' },
+  { href: '/therapists', icon: Stethoscope, label: 'Find a Therapist' },
   { href: '/resources', icon: Library, label: 'Resources' },
   { href: '/challenges', icon: Trophy, label: 'Challenges' },
 ];
@@ -25,7 +26,7 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+    <nav className="grid items-start px-2 text-sm font-medium lg:px-4 py-4">
       {mainNavItems.map(({ href, icon: Icon, label }) => (
         <Link
           key={href}
