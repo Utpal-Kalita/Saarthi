@@ -30,7 +30,7 @@ export function HeroSection({ onGetStartedClick }: { onGetStartedClick: () => vo
             src={heroImage.imageUrl}
             alt={heroImage.description}
             fill
-            className="object-contain"
+            className="object-cover rounded-lg"
             priority
             data-ai-hint={heroImage.imageHint}
           />}
