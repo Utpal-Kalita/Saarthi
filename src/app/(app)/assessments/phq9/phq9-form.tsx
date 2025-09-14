@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -14,11 +15,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { PHQ9_QUESTIONS, getPhq9Interpretation } from "@/lib/constants";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ShieldAlert, Info } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 type Answers = { [key: number]: number };
 
 export function Phq9Form() {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [result, setResult] = useState<{ score: number; interpretation: { severity: string; suggestion: string } } | null>(null);
 
@@ -26,8 +29,19 @@ export function Phq9Form() {
     setAnswers((prev) => ({ ...prev, [questionIndex]: parseInt(value, 10) }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleNext = () => {
+    if (answers[currentQuestion] === undefined) {
+      alert("Please select an answer.");
+      return;
+    }
+    if (currentQuestion < PHQ9_QUESTIONS.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      handleSubmit();
+    }
+  };
+
+  const handleSubmit = () => {
     if (Object.keys(answers).length < PHQ9_QUESTIONS.length) {
       alert("Please answer all questions before submitting.");
       return;
@@ -39,6 +53,7 @@ export function Phq9Form() {
 
   const resetForm = () => {
     setAnswers({});
+    setCurrentQuestion(0);
     setResult(null);
   };
   
@@ -71,33 +86,41 @@ export function Phq9Form() {
     );
   }
 
+  const progress = ((currentQuestion + 1) / PHQ9_QUESTIONS.length) * 100;
+  const questionItem = PHQ9_QUESTIONS[currentQuestion];
+
   return (
     <Card>
+      <CardHeader>
+        <Progress value={progress} className="w-full" />
+      </CardHeader>
       <CardContent className="pt-6">
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {PHQ9_QUESTIONS.map((item, index) => (
-            <div key={index} className="space-y-3 p-4 border rounded-lg bg-card">
-              <p className="font-medium leading-none">
-                {index + 1}. {item.question}
+        <div className="space-y-8">
+            <div key={currentQuestion} className="space-y-4 p-4 rounded-lg bg-card">
+              <p className="font-medium leading-none text-lg">
+                {currentQuestion + 1}. {questionItem.question}
               </p>
               <RadioGroup
-                onValueChange={(value) => handleValueChange(index, value)}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2"
-                required
+                onValueChange={(value) => handleValueChange(currentQuestion, value)}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2"
+                value={answers[currentQuestion]?.toString()}
               >
-                {item.options.map((option, optionIndex) => (
-                  <div key={optionIndex} className="flex items-center space-x-2">
-                    <RadioGroupItem value={String(optionIndex)} id={`q${index}-o${optionIndex}`} />
-                    <Label htmlFor={`q${index}-o${optionIndex}`}>{option}</Label>
-                  </div>
+                {questionItem.options.map((option, optionIndex) => (
+                  <Label 
+                    key={optionIndex}
+                    htmlFor={`q${currentQuestion}-o${optionIndex}`}
+                    className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-colors ${answers[currentQuestion] === optionIndex ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'}`}
+                    >
+                    <RadioGroupItem value={String(optionIndex)} id={`q${currentQuestion}-o${optionIndex}`} />
+                    <span>{option}</span>
+                  </Label>
                 ))}
               </RadioGroup>
             </div>
-          ))}
-          <Button type="submit" className="w-full">
-            Calculate Score
+          <Button onClick={handleNext} className="w-full">
+            {currentQuestion < PHQ9_QUESTIONS.length - 1 ? 'Next' : 'Calculate Score'}
           </Button>
-        </form>
+        </div>
       </CardContent>
     </Card>
   );
