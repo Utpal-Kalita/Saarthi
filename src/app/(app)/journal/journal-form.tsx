@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Lightbulb, Loader2, Smile, Meh, Frown, Laugh, Angry } from "lucide-react";
 import { getInsights } from "./actions";
 import { cn } from "@/lib/utils";
