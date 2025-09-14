@@ -41,6 +41,12 @@
       "description": "Profile picture of Dr. Priya Singh, a psychiatrist.",
       "imageUrl": "https://picsum.photos/seed/therapist3/400/400",
       "imageHint": "friendly woman"
+    },
+    {
+      "id": "hero",
+      "description": "An abstract visual representing support and growth",
+      "imageUrl": "https://picsum.photos/seed/hero/600/600",
+      "imageHint": "support growth"
     }
   ]
 }

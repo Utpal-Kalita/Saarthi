@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 export function HeroSection({ onGetStartedClick }: { onGetStartedClick: () => void }) {
+  const heroImage = PlaceHolderImages.find(p => p.id === 'hero');
+
   return (
     <section id="home" className="py-20 md:py-32 bg-background">
       <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
@@ -23,13 +26,14 @@ export function HeroSection({ onGetStartedClick }: { onGetStartedClick: () => vo
           </div>
         </div>
         <div className="relative h-64 md:h-96">
-           <Image
-            src="https://storage.googleapis.com/aai-web-samples/saarthi-hero.svg"
-            alt="An abstract visual representing support and growth"
+           {heroImage && <Image
+            src={heroImage.imageUrl}
+            alt={heroImage.description}
             fill
             className="object-contain"
             priority
-          />
+            data-ai-hint={heroImage.imageHint}
+          />}
         </div>
       </div>
     </section>
