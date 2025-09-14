@@ -45,7 +45,7 @@
     {
       "id": "hero",
       "description": "An abstract visual representing support and growth",
-      "imageUrl": "https://images.unsplash.com/photo-1528732229983-2079744c8b0a?q=80&w=2070&auto=format&fit=crop",
+      "imageUrl": "https://placehold.co/1200x800/FFF7ED/262626?text=Your+Image+Here",
       "imageHint": "support growth"
     }
   ]
