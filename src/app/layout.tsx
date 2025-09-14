@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans', weight: ['400', '500', '600'] });
 
 export const metadata: Metadata = {
   title: 'Saarthi',

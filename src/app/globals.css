@@ -4,32 +4,32 @@
 
 @layer base {
   :root {
-    --background: 30 80% 99%; /* Off-White */
-    --foreground: 0 0% 15%; /* Charcoal */
+    --background: 20 50% 98%; /* Off-White #FDFCFB */
+    --foreground: 0 0% 15%; /* Charcoal #262626 */
 
-    --card: 36 100% 96%; /* Light Cream */
+    --card: 32 100% 96%; /* Light Cream #FFF7ED */
     --card-foreground: 0 0% 15%; /* Charcoal */
 
-    --popover: 36 100% 96%; /* Light Cream */
+    --popover: 32 100% 96%; /* Light Cream */
     --popover-foreground: 0 0% 15%; /* Charcoal */
 
-    --primary: 26 95% 53%; /* Warm Orange */
+    --primary: 26 95% 53%; /* Warm Orange #F97316 */
     --primary-foreground: 0 0% 100%; /* White */
 
-    --secondary: 36 100% 96%; /* Light Cream */
+    --secondary: 32 100% 96%; /* Light Cream */
     --secondary-foreground: 0 0% 15%; /* Charcoal */
     
-    --muted: 36 60% 93%; /* Lighter Cream/Gray for muted backgrounds */
-    --muted-foreground: 0 0% 45%; /* Soft Gray */
+    --muted: 32 60% 93%; /* Lighter Cream/Gray for muted backgrounds */
+    --muted-foreground: 0 0% 40%; /* Soft Gray #A3A3A3 */
 
-    --accent: 36 100% 96%; /* Light Cream */
+    --accent: 32 100% 96%; /* Light Cream */
     --accent-foreground: 26 95% 53%; /* Warm Orange */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 36 50% 90%; /* Softer border color */
-    --input: 36 50% 90%; /* Softer input border */
+    --border: 32 50% 90%; /* Softer border color */
+    --input: 32 50% 90%; /* Softer input border */
     --ring: 26 95% 53%; /* Warm Orange for focus rings */
     
     --chart-1: 26 95% 53%; /* Warm Orange */
@@ -76,5 +76,8 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  html {
+    scroll-behavior: smooth;
   }
 }

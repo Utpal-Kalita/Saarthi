@@ -1,9 +1,10 @@
 import React from "react";
 import Link from 'next/link';
-import { BotMessageSquare, NotebookText, HeartPulse, Library, Menu, BrainCircuit } from 'lucide-react';
+import { Menu, BrainCircuit } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { AppSidebar } from "@/components/app-sidebar";
+import { UserNav } from "@/components/user-nav";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -47,9 +48,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </SheetContent>
           </Sheet>
-          <div className="w-full flex-1">
-            {/* Can add header content here if needed, like a search bar */}
-          </div>
+          <div className="w-full flex-1" />
+          <UserNav />
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background">
           {children}
