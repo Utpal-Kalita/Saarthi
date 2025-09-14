@@ -11,17 +11,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 const articles = [
   { id: "1", title: "Managing Exam Stress", category: "Academic", imageId: "1", lang: "en" },
   { id: "2", title: "Introduction to Mindfulness", category: "Well-being", imageId: "2", lang: "en" },
   { id: "3", title: "Healthy Digital Habits", category: "Lifestyle", imageId: "3", lang: "en" },
   { id: "4", title: "Communicating with Family", category: "Relationships", imageId: "4", lang: "en" },
-  { id: "1", title: "পৰীক্ষাৰ মানসিক চাপৰ ব্যৱস্থাপনা", category: "शैक्षिक", imageId: "1", lang: "as" },
-  { id: "2", title: "সচেতনতাৰ পৰিচয়", category: "স্বাস্থ্য", imageId: "2", lang: "as" },
-  { id: "3", title: "সুস্থ ডিজিটেল অভ্যাস", category: "জীৱনশৈলী", imageId: "3", lang: "as" },
-  { id: "4", title: "পৰিয়ালৰ সৈতে ആശയ разদান", category: "সম্পৰ্ক", imageId: "4", lang: "as" },
+  { id: "1", title: "পৰীক্ষাৰ মানসিক চাপৰ ব্যৱস্থাপনা", category: "Academic", imageId: "1", lang: "as" },
+  { id: "2", title: "সচেতনতাৰ পৰিচয়", category: "Well-being", imageId: "2", lang: "as" },
+  { id: "3", title: "সুস্থ ডিজিটেল অভ্যাস", category: "Lifestyle", imageId: "3", lang: "as" },
+  { id: "4", title: "পৰিয়ালৰ সৈতে ആശയ разদান", category: "Relationships", imageId: "4", lang: "as" },
 ];
+
+const categories = {
+  en: ["Academic", "Well-being", "Lifestyle", "Relationships"],
+  as: ["Academic", "Well-being", "Lifestyle", "Relationships"]
+};
 
 function ResourceCard({ articleId, title, category, imageId }: { articleId: string; title: string; category: string; imageId: string; }) {
   const image = PlaceHolderImages.find(img => img.id === imageId);
@@ -54,6 +60,38 @@ function ResourceCard({ articleId, title, category, imageId }: { articleId: stri
   );
 }
 
+const ArticleCategorySection = ({ lang, category }: { lang: 'en' | 'as', category: string }) => {
+  const filteredArticles = articles.filter(a => a.lang === lang && a.category === category);
+  if (filteredArticles.length === 0) return null;
+
+  const categoryTranslations: { [key: string]: { [key: string]: string } } = {
+    "Academic": { "as": "शैक्षिक" },
+    "Well-being": { "as": "স্বাস্থ্য" },
+    "Lifestyle": { "as": "জীৱনশৈলী" },
+    "Relationships": { "as": "সম্পৰ্ক" }
+  };
+
+  const translatedCategory = lang === 'as' ? categoryTranslations[category]?.as || category : category;
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-2xl font-bold tracking-tight">{translatedCategory}</h2>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-4">
+        {filteredArticles.map((article) => (
+          <ResourceCard
+            key={`${lang}-${article.id}`}
+            articleId={article.id}
+            title={article.title}
+            category={article.category}
+            imageId={article.imageId}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
 export default function ResourcesPage() {
   return (
     <div className="space-y-6">
@@ -69,31 +107,21 @@ export default function ResourcesPage() {
           <TabsTrigger value="english">English</TabsTrigger>
           <TabsTrigger value="assamese">Assamese (অসমীয়া)</TabsTrigger>
         </TabsList>
-        <TabsContent value="english">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-4">
-            {articles.filter(a => a.lang === 'en').map((article) => (
-              <ResourceCard
-                key={`en-${article.id}`}
-                articleId={article.id}
-                title={article.title}
-                category={article.category}
-                imageId={article.imageId}
-              />
-            ))}
-          </div>
+        <TabsContent value="english" className="mt-6 space-y-8">
+          {categories.en.map((category, index) => (
+            <div key={category}>
+              <ArticleCategorySection lang="en" category={category} />
+              {index < categories.en.length - 1 && <Separator className="mt-8" />}
+            </div>
+          ))}
         </TabsContent>
-        <TabsContent value="assamese">
-           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-4">
-            {articles.filter(a => a.lang === 'as').map((article) => (
-              <ResourceCard
-                key={`as-${article.id}`}
-                articleId={article.id}
-                title={article.title}
-                category={article.category}
-                imageId={article.imageId}
-              />
-            ))}
-          </div>
+        <TabsContent value="assamese" className="mt-6 space-y-8">
+           {categories.as.map((category, index) => (
+             <div key={category}>
+                <ArticleCategorySection lang="as" category={category} />
+                {index < categories.as.length - 1 && <Separator className="mt-8" />}
+             </div>
+           ))}
         </TabsContent>
       </Tabs>
     </div>
