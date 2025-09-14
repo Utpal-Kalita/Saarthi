@@ -4,7 +4,7 @@
 
 **Saarthi** is a comprehensive, AI-powered mental wellness platform designed as a "digital public good" to address the significant mental health treatment gap among adolescents and young adults in India. It integrates evidence-based AI tools with a culturally sensitive, multi-tiered support system to provide accessible, affordable, and stigma-free mental health care.
 
-##  Core Problem
+## Core Problem
 
 Mental health is a critical issue among Indian youth, driven by academic stress, family expectations, and the challenges of the digital age. Key issues include:
 - **High Prevalence, Low Treatment:** A vast number of young people experience mental health issues, yet a massive treatment gap exists.
