@@ -5,6 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BotMessageSquare, NotebookText, HeartPulse, Library, Users, ArrowRight, Lightbulb, TrendingUp, CircleUser } from "lucide-react";
@@ -83,36 +84,54 @@ export default function Dashboard() {
                 <CardDescription>Next steps you can take on your wellness journey.</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-3">
-                <div className="p-4 rounded-lg bg-muted/50 flex flex-col items-start gap-2">
-                    <div className="flex items-center gap-2">
-                        <Library className="h-5 w-5 text-primary" />
-                        <h4 className="font-semibold">Suggested Content</h4>
-                    </div>
-                    <p className="text-sm text-muted-foreground flex-grow">Read our new guide on "Managing Exam Stress" to learn helpful coping techniques.</p>
-                    <Button variant="link" className="p-0 h-auto" asChild>
-                        <Link href="/resources">Read Now <ArrowRight className="ml-2" /></Link>
-                    </Button>
-                </div>
-                <div className="p-4 rounded-lg bg-muted/50 flex flex-col items-start gap-2">
-                     <div className="flex items-center gap-2">
-                        <Users className="h-5 w-5 text-primary" />
-                        <h4 className="font-semibold">Peer Support</h4>
-                    </div>
-                    <p className="text-sm text-muted-foreground flex-grow">Connect with others who understand. Explore our Peer Support Circles for academic stress.</p>
-                     <Button variant="link" className="p-0 h-auto" asChild>
-                        <Link href="/support-circles">Join a Circle <ArrowRight className="ml-2" /></Link>
-                    </Button>
-                </div>
-                 <div className="p-4 rounded-lg bg-muted/50 flex flex-col items-start gap-2">
-                     <div className="flex items-center gap-2">
-                        <HeartPulse className="h-5 w-5 text-primary" />
-                        <h4 className="font-semibold">Professional Help</h4>
-                    </div>
-                    <p className="text-sm text-muted-foreground flex-grow">Considering talking to someone? Explore professional support options, like connecting with a Tele-MANAS counselor.</p>
-                     <Button variant="link" className="p-0 h-auto" asChild>
-                        <Link href="/therapists">Find a Counselor <ArrowRight className="ml-2" /></Link>
-                    </Button>
-                </div>
+                <Card className="bg-muted/50 flex flex-col">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                            <Library className="h-5 w-5 text-primary" />
+                            Suggested Content
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                        <p className="text-sm text-muted-foreground">Read our new guide on "Managing Exam Stress" to learn helpful coping techniques.</p>
+                    </CardContent>
+                    <CardFooter>
+                         <Button variant="link" className="p-0 h-auto" asChild>
+                            <Link href="/resources">Read Now <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                        </Button>
+                    </CardFooter>
+                </Card>
+                 <Card className="bg-muted/50 flex flex-col">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                           <Users className="h-5 w-5 text-primary" />
+                            Peer Support
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                        <p className="text-sm text-muted-foreground">Connect with others who understand. Explore our Peer Support Circles for academic stress.</p>
+                    </CardContent>
+                    <CardFooter>
+                         <Button variant="link" className="p-0 h-auto" asChild>
+                            <Link href="/support-circles">Join a Circle <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                        </Button>
+                    </CardFooter>
+                </Card>
+                 <Card className="bg-muted/50 flex flex-col">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                            <HeartPulse className="h-5 w-5 text-primary" />
+                            Professional Help
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                        <p className="text-sm text-muted-foreground">Considering talking to someone? Explore professional support options, like connecting with a Tele-MANAS counselor.</p>
+                    </CardContent>
+                    <CardFooter>
+                         <Button variant="link" className="p-0 h-auto" asChild>
+                            <Link href="/therapists">Find a Counselor <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                        </Button>
+                    </CardFooter>
+                </Card>
             </CardContent>
         </Card>
       </div>
