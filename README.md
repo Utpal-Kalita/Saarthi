@@ -38,12 +38,120 @@ A clear and safe escalation path for users requiring professional help.
 
 ## Technical Architecture
 
-Saarthi is built on a modern, scalable, and secure technical stack:
-- **Frontend:** Next.js with React, ShadCN UI, and Tailwind CSS.
-- **Backend AI Flows:** Genkit (A Google AI Framework) for orchestrating AI models.
-- **AI Models:**
-    - **Conversational AI:** Google's Gemini models for the chatbot, summarization, and insights.
-- **Database:** A dual-database model is envisioned for production, using PostgreSQL for structured data and MongoDB for unstructured chat logs.
+Saarthi is built on a modern, scalable, and secure technical stack designed for a high-quality user experience and robust AI capabilities.
+
+### High-Level System Overview
+
+The architecture separates the user-facing application from the AI logic. The Next.js frontend provides a reactive and responsive user experience, while Genkit manages all interactions with the underlying AI models (Gemini) in a structured and maintainable way.
+
+```mermaid
+graph TD
+    subgraph "User's Browser"
+        A[User]
+    end
+
+    subgraph "Frontend (Vercel / Next.js)"
+        B[Next.js App Router]
+        C[React Server Components]
+        D[ShadCN UI Components]
+    end
+
+    subgraph "Backend AI Logic (Genkit)"
+        E[Genkit Flows]
+        F[Crisis Detection Flow]
+        G[CBT Chatbot Flow]
+        H[Journal Insights Flow]
+    end
+
+    subgraph "AI Models (Google AI)"
+        I[Gemini Models]
+    end
+
+    A -- Interacts with --> B
+    B -- Renders --> C & D
+    C -- Invokes Server Action --> E
+    E -- Triggers specific flow --> F
+    E -- Triggers specific flow --> G
+    E -- Triggers specific flow --> H
+    F -- Calls --> I
+    G -- Calls --> I
+    H -- Calls --> I
+    I -- Returns response --> E
+    E -- Returns data to --> C
+```
+
+### Core Components
+
+-   **Frontend:**
+    -   **Next.js with App Router:** Provides a modern, performant foundation with server-side rendering and client-side navigation.
+    -   **React & TypeScript:** Ensures a type-safe and component-based UI.
+    -   **ShadCN UI & Tailwind CSS:** Delivers a custom, aesthetically pleasing design system that is accessible and responsive.
+
+-   **Backend AI Flows (Genkit):**
+    -   **Genkit:** A Google AI framework used to define, run, and manage all AI-powered logic. It orchestrates calls to AI models, defines data schemas (using Zod), and structures the AI interactions into manageable "flows."
+    -   **AI Models (Gemini):** Google's powerful language models are used for all generative tasks, including the conversational AI, summarization, and insight generation.
+
+-   **Database (Envisioned for Production):**
+    -   A dual-database model is planned for a full production environment to optimize for different data types.
+    -   **PostgreSQL:** For structured, relational data such as user profiles, assessment scores, and journal metadata.
+    -   **MongoDB:** For unstructured data, specifically the chat logs from the AI Assistant, allowing for flexible storage and analysis.
+
+### Key Data Flows
+
+#### 1. AI Chatbot Interaction
+
+This flow outlines how a user's message is processed, checked for crisis indicators, and responded to by the CBT-trained AI.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant ChatInterface (React Component)
+    participant Next.js Server Action
+    participant CrisisDetectionFlow (Genkit)
+    participant CBTGuidanceFlow (Genkit)
+    participant GeminiModel
+
+    User->>ChatInterface: Types and sends message
+    ChatInterface->>Next.js Server Action: handleChat(userInput, history)
+    Next.js Server Action->>CrisisDetectionFlow: crisisKeywordDetection(userInput)
+    CrisisDetectionFlow->>GeminiModel: Analyze for crisis keywords
+    GeminiModel-->>CrisisDetectionFlow: Returns isCrisis: true/false
+    CrisisDetectionFlow-->>Next.js Server Action: Returns crisis check result
+
+    alt Crisis Detected
+        Next.js Server Action-->>ChatInterface: Returns { isCrisis: true, message }
+        ChatInterface->>User: Displays Crisis Alert Modal
+    else No Crisis
+        Next.js Server Action->>CBTGuidanceFlow: getCBTGuidance(userInput, history)
+        CBTGuidanceFlow->>GeminiModel: Generate empathetic, CBT-based response
+        GeminiModel-->>CBTGuidanceFlow: Returns AI response
+        CBTGuidanceFlow-->>Next.js Server Action: Returns guidance.response
+        Next.js Server Action-->>ChatInterface: Returns { isCrisis: false, response }
+        ChatInterface->>User: Displays new AI message in chat
+    end
+```
+
+#### 2. Mood Journal Insights
+
+This flow shows how a user's journal entry is analyzed to provide personalized reflections.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant JournalForm (React Component)
+    participant Next.js Server Action
+    participant MoodInsightsFlow (Genkit)
+    participant GeminiModel
+
+    User->>JournalForm: Writes journal entry and submits
+    JournalForm->>Next.js Server Action: getInsights(journalEntry)
+    Next.js Server Action->>MoodInsightsFlow: getMoodInsightsFromJournal(journalEntry)
+    MoodInsightsFlow->>GeminiModel: Analyze entry for mood patterns and insights
+    GeminiModel-->>MoodInsightsFlow: Returns generated insights
+    MoodInsightsFlow-->>Next.js Server Action: Returns insights object
+    Next.js Server Action-->>JournalForm: Returns moodInsights string
+    JournalForm->>User: Displays AI-powered insights in the UI
+```
 
 ## Getting Started
 
@@ -94,3 +202,4 @@ This project is built with a "Safety by Design" philosophy:
 - **Privacy First:** End-to-end encryption and data anonymization are core principles.
 - **Human in the Loop:** AI assists, but never replaces, human professionals. All crisis detections are escalated to human-led services.
 - **Bias Mitigation:** AI models are chosen and prompted to be as fair and culturally sensitive as possible.
+```
