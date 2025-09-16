@@ -80,6 +80,64 @@ graph TD
     E -- Returns data to --> C
 ```
 
+### Technical Approach Diagram
+
+This diagram provides a more detailed view of the technical approach, showing how different components interact across the platform.
+
+```mermaid
+graph TD
+    subgraph "Presentation Layer (Client)"
+        UI[User Interface]
+        LandingPage[Landing Page]
+        Dashboard[Student Dashboard]
+        Chat[AI Chat Interface]
+        Journal[Mood Journal]
+        Assessments[Self-Assessments]
+        Resources[Resources Hub]
+        SupportCircles[Support Circles]
+    end
+
+    subgraph "Application Layer (Next.js Server)"
+        AppRouter[Next.js App Router]
+        ServerActions[Server Actions]
+        APIHandlers[API Route Handlers (Implicit)]
+    end
+
+    subgraph "AI Logic Layer (Genkit)"
+        Genkit[Genkit Orchestrator]
+        CrisisFlow[Crisis Detection Flow]
+        CBTFlow[CBT Guidance Flow]
+        InsightsFlow[Journal Insights Flow]
+    end
+
+    subgraph "AI Model Layer (Google AI)"
+        Gemini[Gemini Models]
+    end
+    
+    UI --> AppRouter
+    LandingPage --> AppRouter
+    Dashboard --> AppRouter
+    Chat --> ServerActions
+    Journal --> ServerActions
+    Assessments --> AppRouter
+    Resources --> AppRouter
+    SupportCircles --> AppRouter
+
+    ServerActions -- invokes --> Genkit
+
+    Genkit -- triggers --> CrisisFlow
+    Genkit -- triggers --> CBTFlow
+    Genkit -- triggers --> InsightsFlow
+
+    CrisisFlow -- calls --> Gemini
+    CBTFlow -- calls --> Gemini
+    InsightsFlow -- calls --> Gemini
+
+    Gemini -- returns response --> Genkit
+    Genkit -- returns data to --> ServerActions
+    ServerActions -- updates --> UI
+```
+
 ### Core Components
 
 -   **Frontend:**
@@ -202,4 +260,3 @@ This project is built with a "Safety by Design" philosophy:
 - **Privacy First:** End-to-end encryption and data anonymization are core principles.
 - **Human in the Loop:** AI assists, but never replaces, human professionals. All crisis detections are escalated to human-led services.
 - **Bias Mitigation:** AI models are chosen and prompted to be as fair and culturally sensitive as possible.
-```
