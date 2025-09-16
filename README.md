@@ -86,7 +86,7 @@ This diagram provides a more detailed view of the technical approach, showing ho
 
 ```mermaid
 graph TD
-    subgraph "Presentation Layer (Client)"
+    subgraph PL["Presentation Layer (Client)"]
         UI[User Interface]
         LandingPage[Landing Page]
         Dashboard[Student Dashboard]
@@ -97,20 +97,20 @@ graph TD
         SupportCircles[Support Circles]
     end
 
-    subgraph "Application Layer (Next.js Server)"
+    subgraph AL["Application Layer (Next.js Server)"]
         AppRouter[Next.js App Router]
         ServerActions[Server Actions]
-        APIHandlers[API Route Handlers (Implicit)]
+        APIHandlers["API Route Handlers (Implicit)"]
     end
 
-    subgraph "AI Logic Layer (Genkit)"
+    subgraph AIL["AI Logic Layer (Genkit)"]
         Genkit[Genkit Orchestrator]
         CrisisFlow[Crisis Detection Flow]
         CBTFlow[CBT Guidance Flow]
         InsightsFlow[Journal Insights Flow]
     end
 
-    subgraph "AI Model Layer (Google AI)"
+    subgraph AIML["AI Model Layer (Google AI)"]
         Gemini[Gemini Models]
     end
     
