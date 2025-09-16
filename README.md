@@ -87,7 +87,6 @@ This diagram provides a more detailed view of the technical approach, showing ho
 ```mermaid
 graph TD
     subgraph PL["Presentation Layer (Client)"]
-        UI[User Interface]
         LandingPage[Landing Page]
         Dashboard[Student Dashboard]
         Chat[AI Chat Interface]
@@ -100,7 +99,6 @@ graph TD
     subgraph AL["Application Layer (Next.js Server)"]
         AppRouter[Next.js App Router]
         ServerActions[Server Actions]
-        APIHandlers["API Route Handlers (Implicit)"]
     end
 
     subgraph AIL["AI Logic Layer (Genkit)"]
@@ -114,15 +112,15 @@ graph TD
         Gemini[Gemini Models]
     end
     
-    UI --> AppRouter
     LandingPage --> AppRouter
     Dashboard --> AppRouter
-    Chat --> ServerActions
-    Journal --> ServerActions
     Assessments --> AppRouter
     Resources --> AppRouter
     SupportCircles --> AppRouter
-
+    
+    Chat --> ServerActions
+    Journal --> ServerActions
+    
     ServerActions -- invokes --> Genkit
 
     Genkit -- triggers --> CrisisFlow
@@ -135,7 +133,8 @@ graph TD
 
     Gemini -- returns response --> Genkit
     Genkit -- returns data to --> ServerActions
-    ServerActions -- updates --> UI
+    ServerActions -- updates --> Chat
+    ServerActions -- updates --> Journal
 ```
 
 ### Core Components
@@ -260,3 +259,4 @@ This project is built with a "Safety by Design" philosophy:
 - **Privacy First:** End-to-end encryption and data anonymization are core principles.
 - **Human in the Loop:** AI assists, but never replaces, human professionals. All crisis detections are escalated to human-led services.
 - **Bias Mitigation:** AI models are chosen and prompted to be as fair and culturally sensitive as possible.
+
