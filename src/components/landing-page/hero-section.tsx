@@ -25,7 +25,7 @@ export function HeroSection({ onGetStartedClick }: { onGetStartedClick: () => vo
             </Button>
           </div>
         </div>
-        <div className="relative h-64 w-64 md:h-96 md:w-96 justify-self-center">
+        <div className="relative h-80 w-80 md:h-[28rem] md:w-[28rem] justify-self-center">
            {heroImage && <Image
             src={heroImage.imageUrl}
             alt={heroImage.description}
