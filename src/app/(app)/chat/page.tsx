@@ -9,7 +9,7 @@ import { CameraOff } from "lucide-react";
 
 export default function ChatPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [hasCameraPermission, setHasCameraPermission] = useState(true);
+  const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [isCameraEnabled, setIsCameraEnabled] = useState(false);
   const { toast } = useToast();
 
@@ -28,6 +28,9 @@ export default function ChatPage() {
           const stream = await navigator.mediaDevices.getUserMedia({ video: true });
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
+            videoRef.current.onloadedmetadata = () => {
+              videoRef.current?.play();
+            };
           }
           setHasCameraPermission(true);
         } catch (error) {
@@ -44,6 +47,14 @@ export default function ChatPage() {
     } else {
         setHasCameraPermission(false);
     }
+
+    // Cleanup function to stop video stream
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
   }, [toast]);
 
   return (

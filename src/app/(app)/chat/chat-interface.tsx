@@ -18,12 +18,24 @@ type Message = {
   content: string;
 };
 
+// Add this type definition for the SpeechRecognition API
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
 export function ChatInterface({ videoRef, hasCameraPermission }: { videoRef: React.RefObject<HTMLVideoElement>, hasCameraPermission: boolean }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isPending, startTransition] = useTransition();
   const [isMultiModal, setIsMultiModal] = useState(false);
-  const [isVoiceInput, setIsVoiceInput] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+
+  const recognitionRef = useRef<any>(null);
+
+  const { toast } = useToast();
 
   const [crisisState, setCrisisState] = useState<{
     isCrisis: boolean;
@@ -47,9 +59,70 @@ export function ChatInterface({ videoRef, hasCameraPermission }: { videoRef: Rea
     }
   }, [messages]);
 
+  // Setup Speech Recognition
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'en-US';
+
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0])
+          .map((result) => result.transcript)
+          .join('');
+        setInput(transcript);
+      };
+
+      recognitionRef.current.onerror = (event: any) => {
+        console.error("Speech recognition error", event.error);
+        toast({
+          variant: "destructive",
+          title: "Voice Error",
+          description: "Could not start voice recognition. Please check your microphone permissions.",
+        });
+        setIsListening(false);
+      };
+      
+      recognitionRef.current.onend = () => {
+        if (isListening) {
+           recognitionRef.current.start();
+        }
+      };
+
+    }
+  }, [toast, isListening]);
+  
+  const handleToggleListening = () => {
+    const micEnabled = localStorage.getItem("micAccess") === "true";
+    if (!micEnabled) {
+      toast({
+        title: "Microphone Disabled",
+        description: "Please enable microphone access in settings to use voice input.",
+      });
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    } else {
+      recognitionRef.current?.start();
+      setIsListening(true);
+    }
+  };
+
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isPending) return;
+
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    }
 
     const userMessage: Message = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
@@ -101,7 +174,7 @@ export function ChatInterface({ videoRef, hasCameraPermission }: { videoRef: Rea
                         <p className="font-semibold">Saarthi AI</p>
                         <div className="prose prose-sm text-foreground bg-white p-3 rounded-lg shadow-sm">
                           Hello! I'm here to listen and support you. How are you feeling today?
-                          {isMultiModal && hasCameraPermission && <span className="text-xs block mt-2 text-muted-foreground">Multi-modal features are enabled.</span>}
+                          {isMultiModal && <span className="text-xs block mt-2 text-muted-foreground">Multi-modal features are available. Enable them in settings.</span>}
                         </div>
                     </div>
                 </div>
@@ -166,23 +239,21 @@ export function ChatInterface({ videoRef, hasCameraPermission }: { videoRef: Rea
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={isVoiceInput ? "Listening..." : "Type your message here..."}
+              placeholder={isListening ? "Listening..." : "Type your message here..."}
               className="pr-20 text-base rounded-full"
-              disabled={isPending || isVoiceInput}
+              disabled={isPending}
             />
-            {isMultiModal && (
-              <Button
+            <Button
                 type="button"
                 size="icon"
-                variant={isVoiceInput ? "secondary" : "ghost"}
+                variant={isListening ? "secondary" : "ghost"}
                 className="absolute top-1/2 right-12 -translate-y-1/2 h-8 w-8 rounded-full"
-                onClick={() => setIsVoiceInput(!isVoiceInput)}
+                onClick={handleToggleListening}
                 disabled={isPending}
-                aria-label={isVoiceInput ? "Stop voice input" : "Start voice input"}
+                aria-label={isListening ? "Stop voice input" : "Start voice input"}
               >
-                {isVoiceInput ? <MicOff /> : <Mic />}
+                {isListening ? <MicOff /> : <Mic />}
               </Button>
-            )}
             <Button
               type="submit"
               size="icon"
