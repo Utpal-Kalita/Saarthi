@@ -5,7 +5,7 @@ import { useRef, useEffect, useState } from "react";
 import { ChatInterface } from "./chat-interface";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CameraOff, Smile, Frown, Meh, Annoyed, Video } from "lucide-react";
+import { CameraOff, Smile, Frown, Meh, Annoyed, Video, VideoOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ShieldCheck } from "lucide-react";
@@ -19,58 +19,86 @@ const emotions = [
 
 export default function ChatPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const [isLiveTalkActive, setIsLiveTalkActive] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
-  const [hasMicPermission, setHasMicPermission] = useState(false); // New state for mic
+  const [hasMicPermission, setHasMicPermission] = useState(false);
   const [detectedEmotion, setDetectedEmotion] = useState(emotions[0]);
   const { toast } = useToast();
   
-  const getPermissions = async () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        console.error("Media devices API not available in this browser.");
-        toast({
-            variant: "destructive",
-            title: "Feature Not Supported",
-            description: "Your browser does not support camera or microphone access.",
-        });
-        return;
-    }
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-            videoRef.current.onloadedmetadata = () => {
-              videoRef.current?.play();
-            };
-        }
-        setHasCameraPermission(true);
-        setHasMicPermission(true);
-        setIsLiveTalkActive(true);
-        
-        // Persist choice
-        localStorage.setItem("cameraAccess", "true");
-        localStorage.setItem("micAccess", "true");
-    } catch (error) {
-        console.error("Error accessing media devices:", error);
-        setHasCameraPermission(false);
-        setHasMicPermission(false);
-        setIsLiveTalkActive(false);
-        toast({
-            variant: "destructive",
-            title: "Permissions Denied",
-            description: "Please enable camera and microphone permissions in your browser settings to use this feature.",
-        });
+  const stopMediaTracks = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+      if (videoRef.current) {
+          videoRef.current.srcObject = null;
+      }
     }
   };
 
+  const getPermissions = async (promptUser: boolean) => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      toast({
+        variant: "destructive",
+        title: "Feature Not Supported",
+        description: "Your browser does not support camera or microphone access.",
+      });
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      streamRef.current = stream;
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play().catch(e => console.error("Video play failed:", e));
+      }
+      
+      setHasCameraPermission(true);
+      setHasMicPermission(true);
+      setIsLiveTalkActive(true);
+      if (promptUser) {
+        localStorage.setItem("liveTalkEnabled", "true");
+      }
+    } catch (error) {
+      console.error("Error accessing media devices:", error);
+      setHasCameraPermission(false);
+      setHasMicPermission(false);
+      setIsLiveTalkActive(false);
+      localStorage.setItem("liveTalkEnabled", "false");
+      if (promptUser) {
+        toast({
+          variant: "destructive",
+          title: "Permissions Denied",
+          description: "Please enable camera and microphone permissions in your browser settings to use this feature.",
+        });
+      }
+    }
+  };
+
+  const handleToggleLiveTalk = () => {
+    if (isLiveTalkActive) {
+        // Turn off
+        stopMediaTracks();
+        setIsLiveTalkActive(false);
+        setHasCameraPermission(false);
+        setHasMicPermission(false);
+        localStorage.setItem("liveTalkEnabled", "false");
+    } else {
+        // Turn on
+        getPermissions(true);
+    }
+  };
 
   useEffect(() => {
-    // Stop tracks when component unmounts
+    const liveTalkEnabled = localStorage.getItem("liveTalkEnabled") === "true";
+    if (liveTalkEnabled) {
+      getPermissions(false);
+    }
+
     return () => {
-      if (videoRef.current && videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach(track => track.stop());
-      }
+      stopMediaTracks();
     };
   }, []);
   
@@ -98,12 +126,10 @@ export default function ChatPage() {
             A safe space to talk about what's on your mind. Your conversation is private and secure.
           </p>
         </div>
-        {!isLiveTalkActive && (
-            <Button onClick={getPermissions}>
-                <Video className="mr-2 h-4 w-4" />
-                Live Talk with Saarthi
-            </Button>
-        )}
+        <Button onClick={handleToggleLiveTalk}>
+            {isLiveTalkActive ? <VideoOff className="mr-2 h-4 w-4" /> : <Video className="mr-2 h-4 w-4" />}
+            {isLiveTalkActive ? "Stop Live Talk" : "Live Talk with Saarthi"}
+        </Button>
       </header>
 
       {!isLiveTalkActive && (
@@ -125,7 +151,7 @@ export default function ChatPage() {
                    <div className="absolute inset-0 bg-muted flex flex-col items-center justify-center text-center p-4">
                       <CameraOff className="h-10 w-10 mb-2" />
                       <span className="font-semibold">Camera Off</span>
-                      <p className="text-xs mt-1">Camera permission is not granted.</p>
+                      <p className="text-xs mt-1">Please grant camera permission.</p>
                   </div>
               )}
             </div>
@@ -144,7 +170,7 @@ export default function ChatPage() {
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                      Your real-time emotional analysis will appear here once you start a live talk session.
+                      Real-time emotional analysis will appear here.
                   </p>
                 )}
               </CardContent>
