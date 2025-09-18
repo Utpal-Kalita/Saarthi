@@ -26,18 +26,17 @@ declare global {
 }
 
 export function ChatInterface({ 
-  videoRef, 
   hasCameraPermission,
-  detectedEmotion 
+  detectedEmotion,
+  isMultiModal,
 }: { 
-  videoRef: React.RefObject<HTMLVideoElement>, 
   hasCameraPermission: boolean,
-  detectedEmotion: string
+  detectedEmotion: string,
+  isMultiModal: boolean,
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isPending, startTransition] = useTransition();
-  const [isMultiModal, setIsMultiModal] = useState(false);
   const [isListening, setIsListening] = useState(false);
 
   const recognitionRef = useRef<any>(null);
@@ -50,12 +49,6 @@ export function ChatInterface({
   }>({ isCrisis: false });
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const cameraEnabled = localStorage.getItem("cameraAccess") === "true";
-    const micEnabled = localStorage.getItem("micAccess") === "true";
-    setIsMultiModal(cameraEnabled || micEnabled);
-  }, []);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -180,7 +173,6 @@ export function ChatInterface({
                         <p className="font-semibold">Saarthi AI</p>
                         <div className="prose prose-sm text-foreground bg-white p-3 rounded-lg shadow-sm">
                           Hello! I'm here to listen and support you. How are you feeling today?
-                          {isMultiModal && <span className="text-xs block mt-2 text-muted-foreground">Multi-modal features are available. Enable them in settings.</span>}
                         </div>
                     </div>
                 </div>

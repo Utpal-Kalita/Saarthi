@@ -153,9 +153,9 @@ export default function ChatPage() {
         )}
         <div className={isLiveTalkActive ? 'lg:col-span-2 h-full' : 'col-span-1 lg:col-span-3 h-full'}>
           <ChatInterface 
-            videoRef={videoRef} 
             hasCameraPermission={hasCameraPermission}
             detectedEmotion={detectedEmotion.name}
+            isMultiModal={isLiveTalkActive}
           />
         </div>
       </div>
