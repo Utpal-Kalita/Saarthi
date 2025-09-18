@@ -29,15 +29,18 @@ export function ChatInterface({
   hasCameraPermission,
   detectedEmotion,
   isMultiModal,
+  isListening,
+  setIsListening,
 }: { 
   hasCameraPermission: boolean,
   detectedEmotion: string,
   isMultiModal: boolean,
+  isListening: boolean,
+  setIsListening: (isListening: boolean) => void,
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isPending, startTransition] = useTransition();
-  const [isListening, setIsListening] = useState(false);
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
@@ -90,13 +93,16 @@ export function ChatInterface({
       };
       
       recognitionRef.current.onend = () => {
-        if (isListening) {
+        // This is a check to see if we should restart recognition.
+        // It helps handle cases where the browser might automatically stop listening.
+        // We only restart if the component still thinks it should be listening.
+        if (recognitionRef.current && isListening) {
            recognitionRef.current.start();
         }
       };
 
     }
-  }, [toast, isListening]);
+  }, [toast, isListening, setIsListening]);
   
   const handleToggleListening = () => {
     const micEnabled = localStorage.getItem("micAccess") === "true";

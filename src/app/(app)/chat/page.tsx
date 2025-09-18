@@ -5,7 +5,7 @@ import { useRef, useEffect, useState } from "react";
 import { ChatInterface } from "./chat-interface";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CameraOff, Smile, Frown, Meh, Annoyed, Video, VideoOff } from "lucide-react";
+import { CameraOff, Smile, Frown, Meh, Annoyed, Video, VideoOff, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ShieldCheck } from "lucide-react";
@@ -24,6 +24,7 @@ export default function ChatPage() {
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [hasMicPermission, setHasMicPermission] = useState(false);
   const [detectedEmotion, setDetectedEmotion] = useState(emotions[0]);
+  const [isListening, setIsListening] = useState(false);
   const { toast } = useToast();
   
   const stopMediaTracks = () => {
@@ -144,7 +145,7 @@ export default function ChatPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 overflow-hidden">
         {isLiveTalkActive && (
-          <div className="flex flex-col gap-4">
+          <div className="lg:col-span-1 flex flex-col gap-4">
             <div className="w-full aspect-video bg-muted rounded-xl flex items-center justify-center text-muted-foreground border relative overflow-hidden">
               <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
               {!hasCameraPermission && (
@@ -153,6 +154,12 @@ export default function ChatPage() {
                       <span className="font-semibold">Camera Off</span>
                       <p className="text-xs mt-1">Please grant camera permission.</p>
                   </div>
+              )}
+               {isListening && hasMicPermission && (
+                <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white">
+                    <Mic className="h-8 w-8 mb-2 animate-pulse" />
+                    <span className="font-semibold">Listening...</span>
+                </div>
               )}
             </div>
             <Card className="flex-1">
@@ -182,6 +189,8 @@ export default function ChatPage() {
             hasCameraPermission={hasCameraPermission}
             detectedEmotion={detectedEmotion.name}
             isMultiModal={isLiveTalkActive}
+            isListening={isListening}
+            setIsListening={setIsListening}
           />
         </div>
       </div>
