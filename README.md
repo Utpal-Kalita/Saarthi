@@ -17,7 +17,7 @@ Saarthi provides a "stepped care" model, offering different levels of support ba
 
 ### Tier 1: Universal Self-Care & Mental Health Literacy
 The free, accessible entry point for proactive self-care and building resilience.
-- **AI Conversational Assistant:** A 24/7 AI chatbot providing empathetic conversations, psychoeducation, and guidance on coping strategies (CBT, mindfulness).
+- **AI Conversational Assistant:** A 24/7 AI chatbot providing empathetic conversations, psychoeducation, and guidance on coping strategies (CBT, mindfulness). With user consent, the AI can use the device's camera and microphone to understand facial expressions and voice tone, allowing for a significantly more empathetic and context-aware conversation.
 - **Clinically Validated Self-Assessments:** Confidential tools like PHQ-9, SDQ, and the Internet Addiction Test (IAT) to help users understand their mental state.
 - **Mood & Emotion Journal:** An AI-powered journal to track mood patterns and gain personalized insights.
 - **Hyper-Localized Content Hub:** A library of articles and guides in English and Assamese on relevant topics like stress management and healthy digital habits.
@@ -48,6 +48,10 @@ The architecture separates the user-facing application from the AI logic. The Ne
 graph TD
     subgraph "User's Browser"
         A[User]
+        subgraph "Device I/O"
+            Cam[Camera]
+            Mic[Microphone]
+        end
     end
 
     subgraph "Frontend (Vercel / Next.js)"
@@ -59,15 +63,17 @@ graph TD
     subgraph "Backend AI Logic (Genkit)"
         E[Genkit Flows]
         F[Crisis Detection Flow]
-        G[CBT Chatbot Flow]
+        G[Multi-Modal CBT Flow]
         H[Journal Insights Flow]
     end
 
     subgraph "AI Models (Google AI)"
         I[Gemini Models]
     end
-
+    
     A -- Interacts with --> B
+    Cam -- Stream to --> B
+    Mic -- Stream to --> B
     B -- Renders --> C & D
     C -- Invokes Server Action --> E
     E -- Triggers specific flow --> F
@@ -87,13 +93,15 @@ This diagram provides a more detailed view of the technical approach, showing ho
 ```mermaid
 graph TD
     subgraph PL["Presentation Layer (Client)"]
-        LandingPage[Landing Page]
+        subgraph "User Inputs"
+            direction LR
+            Cam[Camera Feed]
+            Mic[Microphone Input]
+        end
         Dashboard[Student Dashboard]
         Chat[AI Chat Interface]
         Journal[Mood Journal]
         Assessments[Self-Assessments]
-        Resources[Resources Hub]
-        SupportCircles[Support Circles]
     end
 
     subgraph AL["Application Layer (Next.js Server)"]
@@ -104,7 +112,7 @@ graph TD
     subgraph AIL["AI Logic Layer (Genkit)"]
         Genkit[Genkit Orchestrator]
         CrisisFlow[Crisis Detection Flow]
-        CBTFlow[CBT Guidance Flow]
+        CBTFlow[Multi-Modal CBT Flow]
         InsightsFlow[Journal Insights Flow]
     end
 
@@ -112,14 +120,13 @@ graph TD
         Gemini[Gemini Models]
     end
     
-    LandingPage --> AppRouter
     Dashboard --> AppRouter
     Assessments --> AppRouter
-    Resources --> AppRouter
-    SupportCircles --> AppRouter
     
     Chat --> ServerActions
     Journal --> ServerActions
+    Cam --> Chat
+    Mic --> Chat
     
     ServerActions -- invokes --> Genkit
 
@@ -165,11 +172,11 @@ sequenceDiagram
     participant ChatInterface (React Component)
     participant Next.js Server Action
     participant CrisisDetectionFlow (Genkit)
-    participant CBTGuidanceFlow (Genkit)
+    participant MultiModalCBTFlow (Genkit)
     participant GeminiModel
 
-    User->>ChatInterface: Types and sends message
-    ChatInterface->>Next.js Server Action: handleChat(userInput, history)
+    User->>ChatInterface: Types/Speaks and sends message
+    ChatInterface->>Next.js Server Action: handleMultiModalChat(userInput, history, facialEmotion, voiceTone)
     Next.js Server Action->>CrisisDetectionFlow: crisisKeywordDetection(userInput)
     CrisisDetectionFlow->>GeminiModel: Analyze for crisis keywords
     GeminiModel-->>CrisisDetectionFlow: Returns isCrisis: true/false
@@ -179,10 +186,10 @@ sequenceDiagram
         Next.js Server Action-->>ChatInterface: Returns { isCrisis: true, message }
         ChatInterface->>User: Displays Crisis Alert Modal
     else No Crisis
-        Next.js Server Action->>CBTGuidanceFlow: getCBTGuidance(userInput, history)
-        CBTGuidanceFlow->>GeminiModel: Generate empathetic, CBT-based response
-        GeminiModel-->>CBTGuidanceFlow: Returns AI response
-        CBTGuidanceFlow-->>Next.js Server Action: Returns guidance.response
+        Next.js Server Action->>MultiModalCBTFlow: getMultiModalCBTGuidance(userInput, history, facialEmotion, voiceTone)
+        MultiModalCBTFlow->>GeminiModel: Generate empathetic, context-aware, CBT-based response
+        GeminiModel-->>MultiModalCBTFlow: Returns AI response
+        MultiModalCBTFlow-->>Next.js Server Action: Returns guidance.response
         Next.js Server Action-->>ChatInterface: Returns { isCrisis: false, response }
         ChatInterface->>User: Displays new AI message in chat
     end
@@ -256,7 +263,7 @@ To get the project up and running on your local machine, follow these steps.
 ## Ethical Guardrails
 
 This project is built with a "Safety by Design" philosophy:
-- **Privacy First:** End-to-end encryption and data anonymization are core principles.
+- **Privacy First:** End-to-end encryption and data anonymization are core principles. Multi-modal features are strictly opt-in, and video/audio streams are never stored.
 - **Human in the Loop:** AI assists, but never replaces, human professionals. All crisis detections are escalated to human-led services.
 - **Bias Mitigation:** AI models are chosen and prompted to be as fair and culturally sensitive as possible.
-
+```

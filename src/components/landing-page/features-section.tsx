@@ -5,7 +5,7 @@ const features = [
   {
     icon: BrainCircuit,
     title: "Tier 1: Proactive Self-Care",
-    description: "Engage with our empathetic AI chatbot, take confidential self-assessments, and track your mood to build self-awareness and resilience.",
+    description: "Engage with our empathetic AI that can understand your emotions through facial expressions and voice tone for a more human-like conversation. Take confidential self-assessments, and track your mood to build self-awareness.",
   },
   {
     icon: Users,
