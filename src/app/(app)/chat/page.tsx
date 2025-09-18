@@ -38,61 +38,70 @@ export default function ChatPage() {
           videoRef.current.srcObject = null;
       }
     }
-    setHasCameraPermission(false);
-    setHasMicPermission(false);
-    setIsLiveTalkActive(false);
-  };
-
-  const getPermissions = async () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      toast({
-        variant: "destructive",
-        title: "Feature Not Supported",
-        description: "Your browser does not support camera or microphone access.",
-      });
-      return;
-    }
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: true, 
-        audio: true 
-      });
-      streamRef.current = stream;
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play().catch(e => console.error("Video play failed:", e));
-      }
-      
-      setHasCameraPermission(true);
-      setHasMicPermission(true);
-      setPermissionsDenied(false);
-      setIsLiveTalkActive(true);
-      
-    } catch (error) {
-      console.error("Error accessing media devices:", error);
-      if (error instanceof Error && (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError')) {
-        setPermissionsDenied(true);
-      }
-      stopMediaTracks();
-    }
   };
 
   const handleToggleLiveTalk = () => {
     if (isLiveTalkActive) {
       stopMediaTracks();
+      setIsLiveTalkActive(false);
+      setHasCameraPermission(false);
+      setHasMicPermission(false);
     } else {
       setPermissionsDenied(false); // Reset denial state on new attempt
-      getPermissions();
+      setIsLiveTalkActive(true); // This will trigger the useEffect
     }
   };
 
   useEffect(() => {
+    if (!isLiveTalkActive) {
+      return;
+    }
+
+    const getPermissions = async () => {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        toast({
+          variant: "destructive",
+          title: "Feature Not Supported",
+          description: "Your browser does not support camera or microphone access.",
+        });
+        setIsLiveTalkActive(false);
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: true, 
+          audio: true 
+        });
+        streamRef.current = stream;
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play().catch(e => console.error("Video play failed:", e));
+        }
+        
+        setHasCameraPermission(true);
+        setHasMicPermission(true);
+        setPermissionsDenied(false);
+        
+      } catch (error) {
+        console.error("Error accessing media devices:", error);
+        if (error instanceof Error && (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError')) {
+          setPermissionsDenied(true);
+        }
+        stopMediaTracks();
+        setIsLiveTalkActive(false);
+        setHasCameraPermission(false);
+        setHasMicPermission(false);
+      }
+    };
+
+    getPermissions();
+
     return () => {
       stopMediaTracks();
     };
-  }, []);
+  }, [isLiveTalkActive, toast]);
   
   // Simulate emotion detection
   useEffect(() => {
@@ -154,11 +163,11 @@ export default function ChatPage() {
           <div className="lg:col-span-1 flex flex-col gap-4">
             <div className="w-full aspect-video bg-muted rounded-xl flex items-center justify-center text-muted-foreground border relative overflow-hidden">
               <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
-              {!hasCameraPermission && (
+              {!hasCameraPermission && !permissionsDenied && (
                    <div className="absolute inset-0 bg-muted flex flex-col items-center justify-center text-center p-4">
                       <CameraOff className="h-10 w-10 mb-2" />
-                      <span className="font-semibold">Camera Off</span>
-                      <p className="text-xs mt-1">Camera permission may be denied or loading.</p>
+                      <span className="font-semibold">Waiting for Camera...</span>
+                      <p className="text-xs mt-1">Please allow camera access when prompted.</p>
                   </div>
               )}
                {isListening && hasMicPermission && (
@@ -183,7 +192,7 @@ export default function ChatPage() {
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                      Camera not available for real-time emotional analysis.
+                      Enable camera to see real-time emotional analysis.
                   </p>
                 )}
               </CardContent>
