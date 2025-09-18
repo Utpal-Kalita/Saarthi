@@ -200,7 +200,7 @@ export function ChatInterface({
                     <div className="grid gap-1.5 flex-1">
                         <p className="font-semibold">Saarthi AI</p>
                         <div className="prose prose-sm text-foreground bg-white p-3 rounded-lg shadow-sm">
-                          Hello! I'm here to listen and support you. How are you feeling today?
+                          Hello! It's good to see you. I'm here to offer support and a safe space to talk. How are you feeling today?
                         </div>
                     </div>
                 </div>
