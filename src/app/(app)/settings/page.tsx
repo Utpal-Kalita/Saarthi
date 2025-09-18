@@ -11,16 +11,28 @@ import { ShieldCheck, Camera, Mic } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function SettingsPage() {
-  const [cameraAccess, setCameraAccess] = useState(false);
-  const [micAccess, setMicAccess] = useState(false);
+  const [cameraAccess, setCameraAccess] = useState(true);
+  const [micAccess, setMicAccess] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
-    // Load saved preferences from localStorage when the component mounts
-    const savedCameraAccess = localStorage.getItem("cameraAccess") === "true";
-    const savedMicAccess = localStorage.getItem("micAccess") === "true";
-    setCameraAccess(savedCameraAccess);
-    setMicAccess(savedMicAccess);
+    // Load saved preferences from localStorage, defaulting to true if not set
+    const savedCameraAccess = localStorage.getItem("cameraAccess");
+    const savedMicAccess = localStorage.getItem("micAccess");
+
+    const cameraEnabled = savedCameraAccess === null ? true : savedCameraAccess === "true";
+    const micEnabled = savedMicAccess === null ? true : savedMicAccess === "true";
+
+    setCameraAccess(cameraEnabled);
+    setMicAccess(micEnabled);
+    
+    // Also save the default 'true' to localStorage if it's the first visit
+    if (savedCameraAccess === null) {
+      localStorage.setItem("cameraAccess", "true");
+    }
+    if (savedMicAccess === null) {
+      localStorage.setItem("micAccess", "true");
+    }
   }, []);
 
   const handleCameraChange = (checked: boolean) => {
