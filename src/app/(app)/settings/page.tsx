@@ -1,12 +1,45 @@
 
+"use client";
+
+import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ShieldCheck, Camera, Mic } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SettingsPage() {
+  const [cameraAccess, setCameraAccess] = useState(false);
+  const [micAccess, setMicAccess] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Load saved preferences from localStorage when the component mounts
+    const savedCameraAccess = localStorage.getItem("cameraAccess") === "true";
+    const savedMicAccess = localStorage.getItem("micAccess") === "true";
+    setCameraAccess(savedCameraAccess);
+    setMicAccess(savedMicAccess);
+  }, []);
+
+  const handleCameraChange = (checked: boolean) => {
+    setCameraAccess(checked);
+    localStorage.setItem("cameraAccess", String(checked));
+  };
+  
+  const handleMicChange = (checked: boolean) => {
+    setMicAccess(checked);
+    localStorage.setItem("micAccess", String(checked));
+  };
+
+  const handleSaveChanges = () => {
+    toast({
+        title: "Preferences Saved",
+        description: "Your settings have been updated successfully.",
+    })
+  }
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
@@ -43,7 +76,11 @@ export default function SettingsPage() {
                 </p>
               </div>
             </div>
-            <Switch id="camera-access" />
+            <Switch 
+              id="camera-access"
+              checked={cameraAccess}
+              onCheckedChange={handleCameraChange} 
+            />
           </div>
            <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
             <div className="flex items-start space-x-4">
@@ -57,11 +94,15 @@ export default function SettingsPage() {
                 </p>
               </div>
             </div>
-            <Switch id="mic-access" />
+            <Switch 
+              id="mic-access"
+              checked={micAccess}
+              onCheckedChange={handleMicChange}
+            />
           </div>
         </CardContent>
         <CardFooter>
-          <Button>Save Preferences</Button>
+          <Button onClick={handleSaveChanges}>Save Preferences</Button>
         </CardFooter>
       </Card>
     </div>

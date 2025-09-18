@@ -1,24 +1,29 @@
+
 "use client";
 
 import { useState, useRef, useEffect, useTransition } from "react";
-import { CornerDownLeft, Loader2, User, Bot, Sparkles } from "lucide-react";
+import { CornerDownLeft, Loader2, User, Bot, Sparkles, Mic, MicOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { handleChat } from "./actions";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { handleChat, handleMultiModalChat } from "./actions";
 import { CrisisAlert } from "@/components/crisis-alert";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 type Message = {
   role: "user" | "assistant";
   content: string;
 };
 
-export function ChatInterface() {
+export function ChatInterface({ videoRef, hasCameraPermission }: { videoRef: React.RefObject<HTMLVideoElement>, hasCameraPermission: boolean }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [isMultiModal, setIsMultiModal] = useState(false);
+  const [isVoiceInput, setIsVoiceInput] = useState(false);
 
   const [crisisState, setCrisisState] = useState<{
     isCrisis: boolean;
@@ -26,6 +31,12 @@ export function ChatInterface() {
   }>({ isCrisis: false });
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const cameraEnabled = localStorage.getItem("cameraAccess") === "true";
+    const micEnabled = localStorage.getItem("micAccess") === "true";
+    setIsMultiModal(cameraEnabled || micEnabled);
+  }, []);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -43,10 +54,20 @@ export function ChatInterface() {
     const userMessage: Message = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
     const currentChatHistory = [...messages, userMessage];
+    const currentInput = input;
     setInput("");
 
     startTransition(async () => {
-      const result = await handleChat(input, currentChatHistory);
+      let result;
+      if (isMultiModal) {
+        // Placeholder values for emotion and tone
+        const facialEmotion = "neutral"; 
+        const voiceTone = "calm";
+        result = await handleMultiModalChat(currentInput, currentChatHistory, facialEmotion, voiceTone);
+      } else {
+        result = await handleChat(currentInput, currentChatHistory);
+      }
+      
       if (result.isCrisis) {
         setCrisisState({
           isCrisis: true,
@@ -79,7 +100,8 @@ export function ChatInterface() {
                     <div className="grid gap-1.5 flex-1">
                         <p className="font-semibold">Saarthi AI</p>
                         <div className="prose prose-sm text-foreground bg-white p-3 rounded-lg shadow-sm">
-                        Hello! I'm here to listen and support you. How are you feeling today?
+                          Hello! I'm here to listen and support you. How are you feeling today?
+                          {isMultiModal && hasCameraPermission && <span className="text-xs block mt-2 text-muted-foreground">Multi-modal features are enabled.</span>}
                         </div>
                     </div>
                 </div>
@@ -139,15 +161,28 @@ export function ChatInterface() {
         <div className="p-4 border-t bg-card rounded-b-xl">
           <form
             onSubmit={handleSubmit}
-            className="relative"
+            className="relative flex items-center gap-2"
           >
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message here..."
-              className="pr-12 text-base rounded-full"
-              disabled={isPending}
+              placeholder={isVoiceInput ? "Listening..." : "Type your message here..."}
+              className="pr-20 text-base rounded-full"
+              disabled={isPending || isVoiceInput}
             />
+            {isMultiModal && (
+              <Button
+                type="button"
+                size="icon"
+                variant={isVoiceInput ? "secondary" : "ghost"}
+                className="absolute top-1/2 right-12 -translate-y-1/2 h-8 w-8 rounded-full"
+                onClick={() => setIsVoiceInput(!isVoiceInput)}
+                disabled={isPending}
+                aria-label={isVoiceInput ? "Stop voice input" : "Start voice input"}
+              >
+                {isVoiceInput ? <MicOff /> : <Mic />}
+              </Button>
+            )}
             <Button
               type="submit"
               size="icon"
