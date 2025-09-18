@@ -33,6 +33,12 @@ const nextConfig: NextConfig = {
         hostname: 'sdmntprnorthcentralus.oaiusercontent.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'pplx-res.cloudinary.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
