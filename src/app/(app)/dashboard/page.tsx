@@ -29,7 +29,7 @@ export default function Dashboard() {
           </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* My Current State Card */}
         <Card className="lg:col-span-1">
           <CardHeader>
@@ -55,7 +55,7 @@ export default function Dashboard() {
         </Card>
 
         {/* My Progress & Insights Card */}
-        <Card className="lg:col-span-2">
+        <Card className="md:col-span-2 lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
                 <TrendingUp />
@@ -78,12 +78,12 @@ export default function Dashboard() {
         </Card>
 
         {/* Recommended Actions Card */}
-        <Card className="lg:col-span-3">
+        <Card className="md:col-span-2 lg:col-span-3">
             <CardHeader>
                 <CardTitle>Recommended For You</CardTitle>
                 <CardDescription>Next steps you can take on your wellness journey.</CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-4 md:grid-cols-3">
+            <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <Card className="bg-muted/50 flex flex-col">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-lg">
