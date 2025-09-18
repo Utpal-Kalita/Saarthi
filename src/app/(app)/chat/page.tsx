@@ -117,44 +117,46 @@ export default function ChatPage() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 overflow-hidden">
-        <div className="lg:col-span-2 h-full">
+        {isLiveTalkActive && (
+          <div className="flex flex-col gap-4">
+            <div className="w-full aspect-video bg-muted rounded-xl flex items-center justify-center text-muted-foreground border relative overflow-hidden">
+              <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
+              {!hasCameraPermission && (
+                   <div className="absolute inset-0 bg-muted flex flex-col items-center justify-center text-center p-4">
+                      <CameraOff className="h-10 w-10 mb-2" />
+                      <span className="font-semibold">Camera Off</span>
+                      <p className="text-xs mt-1">Camera permission is not granted.</p>
+                  </div>
+              )}
+            </div>
+            <Card className="flex-1">
+              <CardHeader>
+                  <CardTitle>Real-time Insights</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {hasCameraPermission ? (
+                  <div className="flex items-center gap-4">
+                      <detectedEmotion.icon className={`h-16 w-16 ${detectedEmotion.color}`} />
+                      <div>
+                          <p className="text-sm text-muted-foreground">Detected Emotion</p>
+                          <p className="text-2xl font-bold">{detectedEmotion.name}</p>
+                      </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                      Your real-time emotional analysis will appear here once you start a live talk session.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
+        <div className={isLiveTalkActive ? 'lg:col-span-2 h-full' : 'col-span-1 lg:col-span-3 h-full'}>
           <ChatInterface 
             videoRef={videoRef} 
             hasCameraPermission={hasCameraPermission}
             detectedEmotion={detectedEmotion.name}
           />
-        </div>
-        <div className="hidden lg:flex flex-col gap-4">
-          <div className="w-full aspect-video bg-muted rounded-xl flex items-center justify-center text-muted-foreground border relative overflow-hidden">
-            <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
-            {(!isLiveTalkActive) && (
-                 <div className="absolute inset-0 bg-muted flex flex-col items-center justify-center text-center p-4">
-                    <CameraOff className="h-10 w-10 mb-2" />
-                    <span className="font-semibold">Camera Off</span>
-                    <p className="text-xs mt-1">Click "Live Talk" to start the multi-modal session.</p>
-                </div>
-            )}
-          </div>
-          <Card className="flex-1">
-            <CardHeader>
-                <CardTitle>Real-time Insights</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLiveTalkActive && hasCameraPermission ? (
-                <div className="flex items-center gap-4">
-                    <detectedEmotion.icon className={`h-16 w-16 ${detectedEmotion.color}`} />
-                    <div>
-                        <p className="text-sm text-muted-foreground">Detected Emotion</p>
-                        <p className="text-2xl font-bold">{detectedEmotion.name}</p>
-                    </div>
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                    Your real-time emotional analysis will appear here once you start a live talk session.
-                </p>
-              )}
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>
