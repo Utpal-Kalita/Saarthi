@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useTransition } from "react";
-import { CornerDownLeft, Loader2, User, Bot, Sparkles, Mic, MicOff } from "lucide-react";
+import { CornerDownLeft, Loader2, User, Sparkles, Mic, MicOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -11,7 +11,6 @@ import { handleChat, handleMultiModalChat } from "./actions";
 import { CrisisAlert } from "@/components/crisis-alert";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 type Message = {
   role: "user" | "assistant";
@@ -26,7 +25,15 @@ declare global {
   }
 }
 
-export function ChatInterface({ videoRef, hasCameraPermission }: { videoRef: React.RefObject<HTMLVideoElement>, hasCameraPermission: boolean }) {
+export function ChatInterface({ 
+  videoRef, 
+  hasCameraPermission,
+  detectedEmotion 
+}: { 
+  videoRef: React.RefObject<HTMLVideoElement>, 
+  hasCameraPermission: boolean,
+  detectedEmotion: string
+}) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -133,9 +140,8 @@ export function ChatInterface({ videoRef, hasCameraPermission }: { videoRef: Rea
     startTransition(async () => {
       let result;
       if (isMultiModal) {
-        // Placeholder values for emotion and tone
-        const facialEmotion = "neutral"; 
-        const voiceTone = "calm";
+        const facialEmotion = hasCameraPermission ? detectedEmotion : "not_detected";
+        const voiceTone = "calm"; // Placeholder
         result = await handleMultiModalChat(currentInput, currentChatHistory, facialEmotion, voiceTone);
       } else {
         result = await handleChat(currentInput, currentChatHistory);

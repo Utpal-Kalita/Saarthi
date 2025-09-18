@@ -4,13 +4,21 @@
 import { useRef, useEffect, useState } from "react";
 import { ChatInterface } from "./chat-interface";
 import { useToast } from "@/hooks/use-toast";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CameraOff } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CameraOff, Smile, Frown, Meh, Annoyed } from "lucide-react";
+
+const emotions = [
+  { name: 'Neutral', icon: Meh, color: 'text-blue-500' },
+  { name: 'Happy', icon: Smile, color: 'text-green-500' },
+  { name: 'Sad', icon: Frown, color: 'text-gray-500' },
+  { name: 'Surprised', icon: Annoyed, color: 'text-yellow-500' },
+];
 
 export default function ChatPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [isCameraEnabled, setIsCameraEnabled] = useState(false);
+  const [detectedEmotion, setDetectedEmotion] = useState(emotions[0]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -48,7 +56,6 @@ export default function ChatPage() {
         setHasCameraPermission(false);
     }
 
-    // Cleanup function to stop video stream
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream;
@@ -56,6 +63,21 @@ export default function ChatPage() {
       }
     };
   }, [toast]);
+  
+  // Simulate emotion detection
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    if (hasCameraPermission) {
+        intervalId = setInterval(() => {
+            setDetectedEmotion(prev => {
+                const currentIndex = emotions.findIndex(e => e.name === prev.name);
+                const nextIndex = (currentIndex + 1) % emotions.length;
+                return emotions[nextIndex];
+            });
+        }, 3000);
+    }
+    return () => clearInterval(intervalId);
+  }, [hasCameraPermission]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] gap-4">
@@ -67,7 +89,11 @@ export default function ChatPage() {
       </header>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 overflow-hidden">
         <div className="lg:col-span-2 h-full">
-          <ChatInterface videoRef={videoRef} hasCameraPermission={hasCameraPermission} />
+          <ChatInterface 
+            videoRef={videoRef} 
+            hasCameraPermission={hasCameraPermission}
+            detectedEmotion={detectedEmotion.name}
+          />
         </div>
         <div className="hidden lg:flex flex-col gap-4">
           <div className="w-full aspect-video bg-muted rounded-xl flex items-center justify-center text-muted-foreground border relative overflow-hidden">
@@ -80,10 +106,26 @@ export default function ChatPage() {
                 </div>
             )}
           </div>
-          <div className="flex-1 bg-card rounded-xl border p-4">
-            <h3 className="font-semibold mb-2">Real-time Insights</h3>
-            <p className="text-sm text-muted-foreground">When enabled, detected emotion and voice tone analysis will be shown here.</p>
-          </div>
+          <Card className="flex-1">
+            <CardHeader>
+                <CardTitle>Real-time Insights</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isCameraEnabled && hasCameraPermission ? (
+                <div className="flex items-center gap-4">
+                    <detectedEmotion.icon className={`h-16 w-16 ${detectedEmotion.color}`} />
+                    <div>
+                        <p className="text-sm text-muted-foreground">Detected Emotion</p>
+                        <p className="text-2xl font-bold">{detectedEmotion.name}</p>
+                    </div>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                    Enable camera in settings to see real-time emotional analysis here.
+                </p>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
