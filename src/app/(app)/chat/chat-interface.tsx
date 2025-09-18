@@ -27,12 +27,14 @@ declare global {
 
 export function ChatInterface({ 
   hasCameraPermission,
+  hasMicPermission,
   detectedEmotion,
   isMultiModal,
   isListening,
   setIsListening,
 }: { 
   hasCameraPermission: boolean,
+  hasMicPermission: boolean,
   detectedEmotion: string,
   isMultiModal: boolean,
   isListening: boolean,
@@ -93,11 +95,8 @@ export function ChatInterface({
       };
       
       recognitionRef.current.onend = () => {
-        // This is a check to see if we should restart recognition.
-        // It helps handle cases where the browser might automatically stop listening.
-        // We only restart if the component still thinks it should be listening.
-        if (recognitionRef.current && isListening) {
-           recognitionRef.current.start();
+        if (isListening) {
+           setIsListening(false);
         }
       };
 
@@ -105,13 +104,13 @@ export function ChatInterface({
   }, [toast, isListening, setIsListening]);
   
   const handleToggleListening = () => {
-    const micEnabled = localStorage.getItem("micAccess") === "true";
-    if (!micEnabled && isMultiModal) {
-      toast({
-        title: "Microphone Disabled",
-        description: "Please enable microphone access in settings to use voice input.",
-      });
-      return;
+    if (!hasMicPermission) {
+        toast({
+            variant: "destructive",
+            title: "Microphone Disabled",
+            description: "Please enable microphone access in settings to use voice input.",
+        });
+        return;
     }
 
     if (isListening) {
@@ -162,7 +161,7 @@ export function ChatInterface({
         };
         setMessages((prev) => [...prev, assistantMessage]);
         
-        if (isMultiModal && result.response) {
+        if (isMultiModal && result.response && hasMicPermission) {
             const audioResult = await handleTextToSpeech(result.response);
             if (audioResult.audioDataUri) {
                 setAudioSrc(audioResult.audioDataUri);
@@ -281,7 +280,7 @@ export function ChatInterface({
                 variant={isListening ? "secondary" : "ghost"}
                 className="absolute top-1/2 right-12 -translate-y-1/2 h-8 w-8 rounded-full"
                 onClick={handleToggleListening}
-                disabled={isPending || (isMultiModal && !hasCameraPermission)}
+                disabled={isPending || !hasMicPermission}
                 aria-label={isListening ? "Stop voice input" : "Start voice input"}
               >
                 {isListening ? <MicOff /> : <Mic />}

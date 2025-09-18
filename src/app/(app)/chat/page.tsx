@@ -47,18 +47,31 @@ export default function ChatPage() {
       return;
     }
 
+    const liveTalkEnabled = localStorage.getItem("liveTalkEnabled") === "true";
+    const cameraAccess = localStorage.getItem("cameraAccess") === "true";
+    const micAccess = localStorage.getItem("micAccess") === "true";
+    
+    // Only proceed if the feature is enabled in settings or if the user is explicitly turning it on
+    if (!liveTalkEnabled && !promptUser) return;
+    if (!cameraAccess && !micAccess && !promptUser) return;
+
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: cameraAccess, 
+        audio: micAccess 
+      });
       streamRef.current = stream;
 
-      if (videoRef.current) {
+      if (videoRef.current && cameraAccess) {
         videoRef.current.srcObject = stream;
         videoRef.current.play().catch(e => console.error("Video play failed:", e));
       }
       
-      setHasCameraPermission(true);
-      setHasMicPermission(true);
-      setIsLiveTalkActive(true);
+      setHasCameraPermission(cameraAccess);
+      setHasMicPermission(micAccess);
+      setIsLiveTalkActive(true); // Always set to active if we get any stream
+      
       if (promptUser) {
         localStorage.setItem("liveTalkEnabled", "true");
       }
@@ -72,7 +85,7 @@ export default function ChatPage() {
         toast({
           variant: "destructive",
           title: "Permissions Denied",
-          description: "Please enable camera and microphone permissions in your browser settings to use this feature.",
+          description: "Please enable camera and/or microphone permissions in your browser settings and in the Saarthi settings page to use this feature.",
         });
       }
     }
@@ -93,14 +106,12 @@ export default function ChatPage() {
   };
 
   useEffect(() => {
-    const liveTalkEnabled = localStorage.getItem("liveTalkEnabled") === "true";
-    if (liveTalkEnabled) {
-      getPermissions(false);
-    }
+    getPermissions(false); // Check permissions on initial load based on settings
 
     return () => {
       stopMediaTracks();
     };
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   // Simulate emotion detection
@@ -152,7 +163,7 @@ export default function ChatPage() {
                    <div className="absolute inset-0 bg-muted flex flex-col items-center justify-center text-center p-4">
                       <CameraOff className="h-10 w-10 mb-2" />
                       <span className="font-semibold">Camera Off</span>
-                      <p className="text-xs mt-1">Please grant camera permission.</p>
+                      <p className="text-xs mt-1">Camera not enabled in settings.</p>
                   </div>
               )}
                {isListening && hasMicPermission && (
@@ -177,7 +188,7 @@ export default function ChatPage() {
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                      Real-time emotional analysis will appear here.
+                      Enable camera in settings for real-time emotional analysis.
                   </p>
                 )}
               </CardContent>
@@ -187,6 +198,7 @@ export default function ChatPage() {
         <div className={isLiveTalkActive ? 'lg:col-span-2 h-full' : 'col-span-1 lg:col-span-3 h-full'}>
           <ChatInterface 
             hasCameraPermission={hasCameraPermission}
+            hasMicPermission={hasMicPermission}
             detectedEmotion={detectedEmotion.name}
             isMultiModal={isLiveTalkActive}
             isListening={isListening}
