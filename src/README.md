@@ -17,7 +17,7 @@ Saarthi provides a "stepped care" model, offering different levels of support ba
 
 ### Tier 1: Universal Self-Care & Mental Health Literacy
 The free, accessible entry point for proactive self-care and building resilience.
-- **AI Conversational Assistant:** A 24/7 AI chatbot providing empathetic conversations, psychoeducation, and guidance on coping strategies (CBT, mindfulness). With user consent, the AI can use the device's camera and microphone to understand facial expressions and voice tone, allowing for a significantly more empathetic and context-aware conversation.
+- **AI Conversational Assistant:** A 24/7 AI chatbot providing empathetic conversations. With user consent, the AI can use the device's camera and microphone to understand facial expressions and voice tone, and can respond with spoken voice, creating a true "Live Talk" experience.
 - **Clinically Validated Self-Assessments:** Confidential tools like PHQ-9, SDQ, and the Internet Addiction Test (IAT) to help users understand their mental state.
 - **Mood & Emotion Journal:** An AI-powered journal to track mood patterns and gain personalized insights.
 - **Hyper-Localized Content Hub:** A library of articles and guides in English and Assamese on relevant topics like stress management and healthy digital habits.
@@ -65,6 +65,7 @@ graph TD
         F[Crisis Detection Flow]
         G[Multi-Modal CBT Flow]
         H[Journal Insights Flow]
+        TTS[Text-to-Speech Flow]
     end
 
     subgraph "AI Models (Google AI)"
@@ -79,9 +80,11 @@ graph TD
     E -- Triggers specific flow --> F
     E -- Triggers specific flow --> G
     E -- Triggers specific flow --> H
+    E -- Triggers specific flow --> TTS
     F -- Calls --> I
     G -- Calls --> I
     H -- Calls --> I
+    TTS -- Calls --> I
     I -- Returns response --> E
     E -- Returns data to --> C
 ```
@@ -114,6 +117,7 @@ graph TD
         CrisisFlow[Crisis Detection Flow]
         CBTFlow[Multi-Modal CBT Flow]
         InsightsFlow[Journal Insights Flow]
+        TTSFlow[Text-to-Speech Flow]
     end
 
     subgraph AIML["AI Model Layer (Google AI)"]
@@ -133,10 +137,13 @@ graph TD
     Genkit -- triggers --> CrisisFlow
     Genkit -- triggers --> CBTFlow
     Genkit -- triggers --> InsightsFlow
+    Genkit -- triggers --> TTSFlow
 
     CrisisFlow -- calls --> Gemini
     CBTFlow -- calls --> Gemini
     InsightsFlow -- calls --> Gemini
+    TTSFlow -- calls --> Gemini
+
 
     Gemini -- returns response --> Genkit
     Genkit -- returns data to --> ServerActions
@@ -173,6 +180,7 @@ sequenceDiagram
     participant Next.js Server Action
     participant CrisisDetectionFlow (Genkit)
     participant MultiModalCBTFlow (Genkit)
+    participant TextToSpeechFlow (Genkit)
     participant GeminiModel
 
     User->>ChatInterface: Types/Speaks and sends message
@@ -190,8 +198,12 @@ sequenceDiagram
         MultiModalCBTFlow->>GeminiModel: Generate empathetic, context-aware, CBT-based response
         GeminiModel-->>MultiModalCBTFlow: Returns AI response
         MultiModalCBTFlow-->>Next.js Server Action: Returns guidance.response
-        Next.js Server Action-->>ChatInterface: Returns { isCrisis: false, response }
-        ChatInterface->>User: Displays new AI message in chat
+        Next.js Server Action->>TextToSpeechFlow: textToSpeech(guidance.response)
+        TextToSpeechFlow->>GeminiModel: Generate audio from text
+        GeminiModel-->>TextToSpeechFlow: Returns audio data
+        TextToSpeechFlow-->>Next.js Server Action: Returns audioDataUri
+        Next.js Server Action-->>ChatInterface: Returns { isCrisis: false, response, audioDataUri }
+        ChatInterface->>User: Displays new AI message and plays audio
     end
 ```
 
@@ -266,4 +278,3 @@ This project is built with a "Safety by Design" philosophy:
 - **Privacy First:** End-to-end encryption and data anonymization are core principles. Multi-modal features are strictly opt-in, and video/audio streams are never stored.
 - **Human in the Loop:** AI assists, but never replaces, human professionals. All crisis detections are escalated to human-led services.
 - **Bias Mitigation:** AI models are chosen and prompted to be as fair and culturally sensitive as possible.
-```
