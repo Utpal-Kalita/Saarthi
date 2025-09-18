@@ -5,7 +5,7 @@ import { useRef, useEffect, useState } from "react";
 import { ChatInterface } from "./chat-interface";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CameraOff, Smile, Frown, Meh, Annoyed, Video, VideoOff, Mic } from "lucide-react";
+import { CameraOff, Smile, Frown, Meh, Annoyed, Video, VideoOff, Mic, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ShieldCheck } from "lucide-react";
@@ -23,6 +23,7 @@ export default function ChatPage() {
   const [isLiveTalkActive, setIsLiveTalkActive] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [hasMicPermission, setHasMicPermission] = useState(false);
+  const [permissionsDenied, setPermissionsDenied] = useState(false);
   const [detectedEmotion, setDetectedEmotion] = useState(emotions[0]);
   const [isListening, setIsListening] = useState(false);
   const { toast } = useToast();
@@ -35,6 +36,8 @@ export default function ChatPage() {
           videoRef.current.srcObject = null;
       }
     }
+    setHasCameraPermission(false);
+    setHasMicPermission(false);
   };
 
   const getPermissions = async () => {
@@ -44,6 +47,7 @@ export default function ChatPage() {
         title: "Feature Not Supported",
         description: "Your browser does not support camera or microphone access.",
       });
+      setIsLiveTalkActive(false);
       return;
     }
 
@@ -61,18 +65,15 @@ export default function ChatPage() {
       
       setHasCameraPermission(true);
       setHasMicPermission(true);
+      setPermissionsDenied(false);
       setIsLiveTalkActive(true);
       
     } catch (error) {
       console.error("Error accessing media devices:", error);
       setHasCameraPermission(false);
       setHasMicPermission(false);
+      setPermissionsDenied(true);
       setIsLiveTalkActive(false);
-      toast({
-        variant: "destructive",
-        title: "Permissions Denied",
-        description: "Please enable camera and microphone permissions in your browser settings to use this feature.",
-      });
     }
   };
 
@@ -81,8 +82,6 @@ export default function ChatPage() {
         // Turn off
         stopMediaTracks();
         setIsLiveTalkActive(false);
-        setHasCameraPermission(false);
-        setHasMicPermission(false);
     } else {
         // Turn on
         getPermissions();
@@ -135,6 +134,16 @@ export default function ChatPage() {
             </AlertDescription>
         </Alert>
       )}
+      
+       {permissionsDenied && (
+        <Alert variant="destructive" className="mt-4">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle className="font-semibold">Permissions Required</AlertTitle>
+            <AlertDescription>
+                You have denied camera and microphone permissions. To use the Live Talk feature, please enable them in your browser's settings for this site and then click the "Live Talk" button again.
+            </AlertDescription>
+        </Alert>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 overflow-hidden">
         {isLiveTalkActive && (
@@ -145,7 +154,7 @@ export default function ChatPage() {
                    <div className="absolute inset-0 bg-muted flex flex-col items-center justify-center text-center p-4">
                       <CameraOff className="h-10 w-10 mb-2" />
                       <span className="font-semibold">Camera Off</span>
-                      <p className="text-xs mt-1">Camera permission denied.</p>
+                      <p className="text-xs mt-1">Camera permission may be denied or loading.</p>
                   </div>
               )}
                {isListening && hasMicPermission && (
