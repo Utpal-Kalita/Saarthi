@@ -135,7 +135,7 @@ export default function ChatPage() {
        <PermissionInstructionsDialog open={showInstructions} onOpenChange={setShowInstructions} />
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-headline">AI Assistant</h1>
+          <h1 className="text-3xl font-bold tracking-tight font-headline">Saarthi AI</h1>
           <p className="text-muted-foreground">
             A safe space to talk about what's on your mind. Your conversation is private and secure.
           </p>

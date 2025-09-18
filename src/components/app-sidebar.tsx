@@ -8,7 +8,7 @@ import { Separator } from './ui/separator';
 
 const mainNavItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/chat', icon: BotMessageSquare, label: 'AI Assistant' },
+  { href: '/chat', icon: BotMessageSquare, label: 'Saarthi AI' },
   { href: '/journal', icon: NotebookText, label: 'Mood Journal' },
   { href: '/assessments', icon: HeartPulse, label: 'Self-Assessments' },
   { href: '/support-circles', icon: Users, label: 'Support Circles' },
