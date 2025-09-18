@@ -9,6 +9,7 @@ import { CameraOff, Smile, Frown, Meh, Annoyed, Video, VideoOff, Mic, AlertTrian
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ShieldCheck } from "lucide-react";
+import { PermissionInstructionsDialog } from "./permission-instructions";
 
 const emotions = [
   { name: 'Neutral', icon: Meh, color: 'text-blue-500' },
@@ -26,6 +27,7 @@ export default function ChatPage() {
   const [permissionsDenied, setPermissionsDenied] = useState(false);
   const [detectedEmotion, setDetectedEmotion] = useState(emotions[0]);
   const [isListening, setIsListening] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
   const { toast } = useToast();
   
   const stopMediaTracks = () => {
@@ -38,6 +40,7 @@ export default function ChatPage() {
     }
     setHasCameraPermission(false);
     setHasMicPermission(false);
+    setIsLiveTalkActive(false);
   };
 
   const getPermissions = async () => {
@@ -47,7 +50,6 @@ export default function ChatPage() {
         title: "Feature Not Supported",
         description: "Your browser does not support camera or microphone access.",
       });
-      setIsLiveTalkActive(false);
       return;
     }
 
@@ -70,26 +72,23 @@ export default function ChatPage() {
       
     } catch (error) {
       console.error("Error accessing media devices:", error);
-      setHasCameraPermission(false);
-      setHasMicPermission(false);
-      setPermissionsDenied(true);
-      setIsLiveTalkActive(false);
+      if (error instanceof Error && (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError')) {
+        setPermissionsDenied(true);
+      }
+      stopMediaTracks();
     }
   };
 
   const handleToggleLiveTalk = () => {
     if (isLiveTalkActive) {
-        // Turn off
-        stopMediaTracks();
-        setIsLiveTalkActive(false);
+      stopMediaTracks();
     } else {
-        // Turn on
-        getPermissions();
+      setPermissionsDenied(false); // Reset denial state on new attempt
+      getPermissions();
     }
   };
 
   useEffect(() => {
-    // Cleanup function to stop media tracks when the component unmounts
     return () => {
       stopMediaTracks();
     };
@@ -112,6 +111,7 @@ export default function ChatPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] gap-4">
+       <PermissionInstructionsDialog open={showInstructions} onOpenChange={setShowInstructions} />
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <div>
           <h1 className="text-3xl font-bold tracking-tight font-headline">AI Assistant</h1>
@@ -125,7 +125,7 @@ export default function ChatPage() {
         </Button>
       </header>
 
-      {!isLiveTalkActive && (
+      {!isLiveTalkActive && !permissionsDenied && (
         <Alert variant="default" className="bg-primary/10 border-primary/20 mt-4">
             <ShieldCheck className="h-4 w-4" />
             <AlertTitle className="font-semibold">Enhance Your Experience</AlertTitle>
@@ -140,8 +140,12 @@ export default function ChatPage() {
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle className="font-semibold">Permissions Required</AlertTitle>
             <AlertDescription>
-                You have denied camera and microphone permissions. To use the Live Talk feature, please enable them in your browser's settings for this site and then click the "Live Talk" button again.
+                Camera and microphone access was denied. To use Live Talk, you need to grant permission in your browser settings.
             </AlertDescription>
+            <div className="mt-4 flex gap-2">
+                <Button variant="secondary" onClick={handleToggleLiveTalk}>Retry</Button>
+                <Button variant="outline" onClick={() => setShowInstructions(true)}>Show Instructions</Button>
+            </div>
         </Alert>
       )}
 
