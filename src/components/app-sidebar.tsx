@@ -19,7 +19,6 @@ const mainNavItems = [
 
 const secondaryNavItems = [
     { href: '/portal', icon: Building, label: 'Teacher & Parent Portal' },
-    { href: '/settings', icon: UserCog, label: 'Settings' },
 ]
 
 export function AppSidebar() {

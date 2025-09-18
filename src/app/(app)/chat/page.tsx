@@ -9,7 +9,6 @@ import { CameraOff, Smile, Frown, Meh, Annoyed, Video, VideoOff, Mic } from "luc
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ShieldCheck } from "lucide-react";
-import Link from "next/link";
 
 const emotions = [
   { name: 'Neutral', icon: Meh, color: 'text-blue-500' },
@@ -38,7 +37,7 @@ export default function ChatPage() {
     }
   };
 
-  const getPermissions = async (promptUser: boolean) => {
+  const getPermissions = async () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       toast({
         variant: "destructive",
@@ -48,46 +47,32 @@ export default function ChatPage() {
       return;
     }
 
-    const liveTalkEnabled = localStorage.getItem("liveTalkEnabled") === "true";
-    const cameraAccess = localStorage.getItem("cameraAccess") === "true";
-    const micAccess = localStorage.getItem("micAccess") === "true";
-    
-    if (!liveTalkEnabled && !promptUser) return;
-    if (!cameraAccess && !micAccess && !promptUser) return;
-
-
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: cameraAccess, 
-        audio: micAccess 
+        video: true, 
+        audio: true 
       });
       streamRef.current = stream;
 
-      if (videoRef.current && cameraAccess) {
+      if (videoRef.current) {
         videoRef.current.srcObject = stream;
         videoRef.current.play().catch(e => console.error("Video play failed:", e));
       }
       
-      setHasCameraPermission(cameraAccess);
-      setHasMicPermission(micAccess);
+      setHasCameraPermission(true);
+      setHasMicPermission(true);
       setIsLiveTalkActive(true);
       
-      if (promptUser) {
-        localStorage.setItem("liveTalkEnabled", "true");
-      }
     } catch (error) {
       console.error("Error accessing media devices:", error);
       setHasCameraPermission(false);
       setHasMicPermission(false);
       setIsLiveTalkActive(false);
-      localStorage.setItem("liveTalkEnabled", "false");
-      if (promptUser) {
-        toast({
-          variant: "destructive",
-          title: "Permissions Denied",
-          description: "Please enable camera and/or microphone permissions in your browser settings and in the Saarthi settings page to use this feature.",
-        });
-      }
+      toast({
+        variant: "destructive",
+        title: "Permissions Denied",
+        description: "Please enable camera and microphone permissions in your browser settings to use this feature.",
+      });
     }
   };
 
@@ -98,32 +83,17 @@ export default function ChatPage() {
         setIsLiveTalkActive(false);
         setHasCameraPermission(false);
         setHasMicPermission(false);
-        localStorage.setItem("liveTalkEnabled", "false");
     } else {
-        // Check if at least one permission is enabled in settings before trying to turn on
-        const cameraAccess = localStorage.getItem("cameraAccess") === "true";
-        const micAccess = localStorage.getItem("micAccess") === "true";
-        if (!cameraAccess && !micAccess) {
-            toast({
-                variant: "destructive",
-                title: "Permissions Not Enabled",
-                description: "Please enable camera or microphone access in the settings page to use Live Talk.",
-                action: <Button onClick={() => window.location.href = '/settings'} variant="outline">Go to Settings</Button>
-            });
-            return;
-        }
         // Turn on
-        getPermissions(true);
+        getPermissions();
     }
   };
 
   useEffect(() => {
-    getPermissions(false); // Check permissions on initial load based on settings
-
+    // Cleanup function to stop media tracks when the component unmounts
     return () => {
       stopMediaTracks();
     };
-     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   // Simulate emotion detection
@@ -175,7 +145,7 @@ export default function ChatPage() {
                    <div className="absolute inset-0 bg-muted flex flex-col items-center justify-center text-center p-4">
                       <CameraOff className="h-10 w-10 mb-2" />
                       <span className="font-semibold">Camera Off</span>
-                      <p className="text-xs mt-1">Camera not enabled in settings.</p>
+                      <p className="text-xs mt-1">Camera permission denied.</p>
                   </div>
               )}
                {isListening && hasMicPermission && (
@@ -200,7 +170,7 @@ export default function ChatPage() {
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                      Enable camera in settings for real-time emotional analysis.
+                      Camera not available for real-time emotional analysis.
                   </p>
                 )}
               </CardContent>
