@@ -125,8 +125,9 @@ export function ChatInterface({
     }
 
     const userMessage: Message = { role: "user", content: input };
+    const previousMessages = [...messages]; // History before the new message
     setMessages((prev) => [...prev, userMessage]);
-    const currentChatHistory = [...messages, userMessage];
+    
     const currentInput = input;
     setInput("");
 
@@ -135,9 +136,9 @@ export function ChatInterface({
       if (isMultiModal) {
         const facialEmotion = hasCameraPermission ? detectedEmotion : "not_detected";
         const voiceTone = "calm"; // Placeholder
-        result = await handleMultiModalChat(currentInput, currentChatHistory, facialEmotion, voiceTone);
+        result = await handleMultiModalChat(currentInput, previousMessages, facialEmotion, voiceTone);
       } else {
-        result = await handleChat(currentInput, currentChatHistory);
+        result = await handleChat(currentInput, previousMessages);
       }
       
       if (result.isCrisis) {
