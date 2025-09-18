@@ -25,12 +25,12 @@ export function HeroSection({ onGetStartedClick }: { onGetStartedClick: () => vo
             </Button>
           </div>
         </div>
-        <div className="relative h-64 md:h-96">
+        <div className="relative h-64 w-64 md:h-96 md:w-96 justify-self-center">
            {heroImage && <Image
             src={heroImage.imageUrl}
             alt={heroImage.description}
             fill
-            className="object-cover rounded-lg"
+            className="object-cover rounded-full"
             priority
             data-ai-hint={heroImage.imageHint}
           />}
