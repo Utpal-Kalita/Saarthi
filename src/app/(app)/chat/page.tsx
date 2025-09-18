@@ -5,7 +5,10 @@ import { useRef, useEffect, useState } from "react";
 import { ChatInterface } from "./chat-interface";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CameraOff, Smile, Frown, Meh, Annoyed } from "lucide-react";
+import { CameraOff, Smile, Frown, Meh, Annoyed, Video } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ShieldCheck } from "lucide-react";
 
 const emotions = [
   { name: 'Neutral', icon: Meh, color: 'text-blue-500' },
@@ -16,58 +19,65 @@ const emotions = [
 
 export default function ChatPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [isLiveTalkActive, setIsLiveTalkActive] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
-  const [isCameraEnabled, setIsCameraEnabled] = useState(false);
+  const [hasMicPermission, setHasMicPermission] = useState(false); // New state for mic
   const [detectedEmotion, setDetectedEmotion] = useState(emotions[0]);
   const { toast } = useToast();
-
-  useEffect(() => {
-    const cameraEnabled = localStorage.getItem("cameraAccess") === "true";
-    setIsCameraEnabled(cameraEnabled);
-
-    if (cameraEnabled) {
-      const getCameraPermission = async () => {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            console.error("Camera API not available in this browser.");
-            setHasCameraPermission(false);
-            return;
-        }
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          if (videoRef.current) {
+  
+  const getPermissions = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.error("Media devices API not available in this browser.");
+        toast({
+            variant: "destructive",
+            title: "Feature Not Supported",
+            description: "Your browser does not support camera or microphone access.",
+        });
+        return;
+    }
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        if (videoRef.current) {
             videoRef.current.srcObject = stream;
             videoRef.current.onloadedmetadata = () => {
               videoRef.current?.play();
             };
-          }
-          setHasCameraPermission(true);
-        } catch (error) {
-          console.error("Error accessing camera:", error);
-          setHasCameraPermission(false);
-          toast({
-            variant: "destructive",
-            title: "Camera Access Denied",
-            description: "Please enable camera permissions in your browser settings to use this feature.",
-          });
         }
-      };
-      getCameraPermission();
-    } else {
+        setHasCameraPermission(true);
+        setHasMicPermission(true);
+        setIsLiveTalkActive(true);
+        
+        // Persist choice
+        localStorage.setItem("cameraAccess", "true");
+        localStorage.setItem("micAccess", "true");
+    } catch (error) {
+        console.error("Error accessing media devices:", error);
         setHasCameraPermission(false);
+        setHasMicPermission(false);
+        setIsLiveTalkActive(false);
+        toast({
+            variant: "destructive",
+            title: "Permissions Denied",
+            description: "Please enable camera and microphone permissions in your browser settings to use this feature.",
+        });
     }
+  };
 
+
+  useEffect(() => {
+    // Stop tracks when component unmounts
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream;
         stream.getTracks().forEach(track => track.stop());
       }
     };
-  }, [toast]);
+  }, []);
   
   // Simulate emotion detection
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
-    if (hasCameraPermission) {
+    if (isLiveTalkActive && hasCameraPermission) {
         intervalId = setInterval(() => {
             setDetectedEmotion(prev => {
                 const currentIndex = emotions.findIndex(e => e.name === prev.name);
@@ -77,16 +87,35 @@ export default function ChatPage() {
         }, 3000);
     }
     return () => clearInterval(intervalId);
-  }, [hasCameraPermission]);
+  }, [isLiveTalkActive, hasCameraPermission]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] gap-4">
-      <header>
-        <h1 className="text-3xl font-bold tracking-tight font-headline">AI Assistant</h1>
-        <p className="text-muted-foreground">
-          A safe space to talk about what's on your mind. Your conversation is private and secure.
-        </p>
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight font-headline">AI Assistant</h1>
+          <p className="text-muted-foreground">
+            A safe space to talk about what's on your mind. Your conversation is private and secure.
+          </p>
+        </div>
+        {!isLiveTalkActive && (
+            <Button onClick={getPermissions}>
+                <Video className="mr-2 h-4 w-4" />
+                Live Talk with Saarthi
+            </Button>
+        )}
       </header>
+
+      {!isLiveTalkActive && (
+        <Alert variant="default" className="bg-primary/10 border-primary/20 mt-4">
+            <ShieldCheck className="h-4 w-4" />
+            <AlertTitle className="font-semibold">Enhance Your Experience</AlertTitle>
+            <AlertDescription>
+                Click "Live Talk with Saarthi" to enable your camera and microphone for a more empathetic, multi-modal conversation. Your video and audio are never recorded or stored.
+            </AlertDescription>
+        </Alert>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 overflow-hidden">
         <div className="lg:col-span-2 h-full">
           <ChatInterface 
@@ -98,11 +127,11 @@ export default function ChatPage() {
         <div className="hidden lg:flex flex-col gap-4">
           <div className="w-full aspect-video bg-muted rounded-xl flex items-center justify-center text-muted-foreground border relative overflow-hidden">
             <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
-            {(!isCameraEnabled || !hasCameraPermission) && (
+            {(!isLiveTalkActive) && (
                  <div className="absolute inset-0 bg-muted flex flex-col items-center justify-center text-center p-4">
                     <CameraOff className="h-10 w-10 mb-2" />
                     <span className="font-semibold">Camera Off</span>
-                    <p className="text-xs mt-1">Enable in settings for multi-modal insights.</p>
+                    <p className="text-xs mt-1">Click "Live Talk" to start the multi-modal session.</p>
                 </div>
             )}
           </div>
@@ -111,7 +140,7 @@ export default function ChatPage() {
                 <CardTitle>Real-time Insights</CardTitle>
             </CardHeader>
             <CardContent>
-              {isCameraEnabled && hasCameraPermission ? (
+              {isLiveTalkActive && hasCameraPermission ? (
                 <div className="flex items-center gap-4">
                     <detectedEmotion.icon className={`h-16 w-16 ${detectedEmotion.color}`} />
                     <div>
@@ -121,7 +150,7 @@ export default function ChatPage() {
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                    Enable camera in settings to see real-time emotional analysis here.
+                    Your real-time emotional analysis will appear here once you start a live talk session.
                 </p>
               )}
             </CardContent>
