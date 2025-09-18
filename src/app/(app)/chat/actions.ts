@@ -4,6 +4,7 @@
 import { crisisKeywordDetection } from "@/ai/flows/crisis-keyword-detection";
 import { getCBTGuidance } from "@/ai/flows/cbt-guidance-from-chatbot";
 import { getMultiModalCBTGuidance } from "@/ai/flows/multimodal-cbt-guidance";
+import { textToSpeech } from "@/ai/flows/text-to-speech";
 
 type Message = {
   role: "user" | "assistant";
@@ -88,6 +89,23 @@ export async function handleMultiModalChat(
     return {
       isCrisis: false,
       response: "Sorry, something went wrong. Please try again later.",
+    };
+  }
+}
+
+// New action for Text-to-Speech
+export async function handleTextToSpeech(text: string) {
+  try {
+    const result = await textToSpeech({ text });
+    return {
+      audioDataUri: result.audioDataUri,
+      error: null,
+    };
+  } catch (error) {
+    console.error("Error in handleTextToSpeech action:", error);
+    return {
+      audioDataUri: null,
+      error: "Sorry, I could not generate audio for this response.",
     };
   }
 }

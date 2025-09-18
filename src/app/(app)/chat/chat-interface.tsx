@@ -2,12 +2,12 @@
 "use client";
 
 import { useState, useRef, useEffect, useTransition } from "react";
-import { CornerDownLeft, Loader2, User, Sparkles, Mic, MicOff } from "lucide-react";
+import { CornerDownLeft, Loader2, User, Sparkles, Mic, MicOff, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { handleChat, handleMultiModalChat } from "./actions";
+import { handleChat, handleMultiModalChat, handleTextToSpeech } from "./actions";
 import { CrisisAlert } from "@/components/crisis-alert";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -38,8 +38,11 @@ export function ChatInterface({
   const [input, setInput] = useState("");
   const [isPending, startTransition] = useTransition();
   const [isListening, setIsListening] = useState(false);
+  const [audioSrc, setAudioSrc] = useState<string | null>(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const recognitionRef = useRef<any>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const { toast } = useToast();
 
@@ -97,7 +100,7 @@ export function ChatInterface({
   
   const handleToggleListening = () => {
     const micEnabled = localStorage.getItem("micAccess") === "true";
-    if (!micEnabled) {
+    if (!micEnabled && isMultiModal) {
       toast({
         title: "Microphone Disabled",
         description: "Please enable microphone access in settings to use voice input.",
@@ -152,9 +155,28 @@ export function ChatInterface({
           content: result.response || "I'm sorry, I couldn't process that. Please try again.",
         };
         setMessages((prev) => [...prev, assistantMessage]);
+        
+        if (isMultiModal && result.response) {
+            const audioResult = await handleTextToSpeech(result.response);
+            if (audioResult.audioDataUri) {
+                setAudioSrc(audioResult.audioDataUri);
+            } else {
+                toast({
+                    variant: "destructive",
+                    title: "Audio Error",
+                    description: audioResult.error
+                })
+            }
+        }
       }
     });
   };
+
+  useEffect(() => {
+    if (audioSrc && audioRef.current) {
+        audioRef.current.play().catch(e => console.error("Audio playback failed", e));
+    }
+  }, [audioSrc]);
 
   return (
     <>
@@ -194,7 +216,12 @@ export function ChatInterface({
                   </Avatar>
                 )}
                 <div className={cn("grid gap-1.5 flex-1 max-w-[80%]", message.role === "user" ? "text-right" : "")}>
-                   {message.role === "assistant" && <p className="font-semibold">Saarthi AI</p>}
+                   <div className={cn("flex items-center gap-2", message.role === "user" ? "justify-end" : "")}>
+                       {message.role === "assistant" && <p className="font-semibold">Saarthi AI</p>}
+                       {message.role === 'assistant' && isSpeaking && index === messages.length - 1 && (
+                            <Volume2 className="h-4 w-4 text-primary animate-pulse" />
+                        )}
+                   </div>
                   <div
                     className={cn(
                       "prose prose-sm text-foreground p-3 rounded-lg shadow-sm",
@@ -248,7 +275,7 @@ export function ChatInterface({
                 variant={isListening ? "secondary" : "ghost"}
                 className="absolute top-1/2 right-12 -translate-y-1/2 h-8 w-8 rounded-full"
                 onClick={handleToggleListening}
-                disabled={isPending}
+                disabled={isPending || (isMultiModal && !hasCameraPermission)}
                 aria-label={isListening ? "Stop voice input" : "Start voice input"}
               >
                 {isListening ? <MicOff /> : <Mic />}
@@ -264,6 +291,18 @@ export function ChatInterface({
           </form>
         </div>
       </div>
+      {audioSrc && (
+          <audio 
+            ref={audioRef} 
+            src={audioSrc} 
+            onPlay={() => setIsSpeaking(true)}
+            onEnded={() => {
+                setIsSpeaking(false);
+                setAudioSrc(null);
+            }}
+            hidden 
+          />
+      )}
     </>
   );
 }
