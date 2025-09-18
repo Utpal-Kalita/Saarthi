@@ -102,7 +102,7 @@ export function Phq9Form() {
               </p>
               <RadioGroup
                 onValueChange={(value) => handleValueChange(currentQuestion, value)}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2"
+                className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2"
                 value={answers[currentQuestion]?.toString()}
               >
                 {questionItem.options.map((option, optionIndex) => (

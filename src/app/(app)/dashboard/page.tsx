@@ -19,7 +19,7 @@ export default function Dashboard() {
     <div className="flex flex-col gap-6">
       {/* Header & Welcome Section */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-headline">Good Morning, {userName}!</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-headline">Good Morning, {userName}!</h1>
         <p className="text-muted-foreground">"The secret of getting ahead is getting started." - Mark Twain</p>
       </div>
       

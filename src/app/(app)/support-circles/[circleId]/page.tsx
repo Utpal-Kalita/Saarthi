@@ -17,11 +17,11 @@ export default function SupportCirclePage({ params }: { params: { circleId: stri
   return (
     <div className="space-y-6">
       <header>
-        <div className="flex items-center gap-3 mb-2">
+        <div className="flex items-start md:items-center gap-3 mb-2 flex-col md:flex-row">
           <div className="p-2 bg-muted rounded-full">
             <circle.icon className="h-6 w-6 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight font-headline">{circle.title}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-headline">{circle.title}</h1>
         </div>
         <p className="text-muted-foreground">{circle.description}</p>
       </header>

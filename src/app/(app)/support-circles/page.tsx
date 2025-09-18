@@ -9,7 +9,7 @@ export default function SupportCirclesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-headline">Support Circles</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-headline">Support Circles</h1>
         <p className="text-muted-foreground mt-2">
           Connect with peers who understand what you're going through. These are safe, anonymous, and moderated spaces to share and listen.
         </p>

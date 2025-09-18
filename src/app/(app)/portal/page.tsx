@@ -52,7 +52,7 @@ export default function PortalPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-headline">Teacher & Parent Portal</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-headline">Teacher & Parent Portal</h1>
         <p className="text-muted-foreground mt-2">
           Resources to help build a supportive ecosystem for our youth.
         </p>

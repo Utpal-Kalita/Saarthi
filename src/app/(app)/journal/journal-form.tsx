@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useTransition } from "react";
@@ -38,7 +39,7 @@ export function JournalForm() {
   };
 
   return (
-    <div className="grid md:grid-cols-2 gap-6">
+    <div className="grid lg:grid-cols-2 gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Today's Check-in</CardTitle>
@@ -52,7 +53,7 @@ export function JournalForm() {
                 type="single" 
                 value={selectedMood || ""}
                 onValueChange={(value) => setSelectedMood(value)}
-                className="grid grid-cols-5 gap-2"
+                className="grid grid-cols-3 sm:grid-cols-5 gap-2"
                 aria-label="Mood selection"
                 disabled={isPending}
               >
@@ -63,7 +64,7 @@ export function JournalForm() {
                     aria-label={mood.name}
                     className="flex flex-col h-auto gap-2 p-3 rounded-lg border data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
                   >
-                    <mood.icon className={cn("h-8 w-8", mood.color)} />
+                    <mood.icon className={cn("h-6 w-6 sm:h-8 sm:w-8", mood.color)} />
                     <span className="text-xs text-muted-foreground">{mood.name}</span>
                   </ToggleGroupItem>
                 ))}
@@ -109,7 +110,7 @@ export function JournalForm() {
             ) : insights ? (
               <p className="whitespace-pre-wrap text-sm">{insights}</p>
             ) : (
-              <div className="flex items-center justify-center h-full text-muted-foreground">
+              <div className="flex items-center justify-center h-full text-muted-foreground text-center p-4">
                 <p>Your insights will appear here after you submit an entry.</p>
               </div>
             )}

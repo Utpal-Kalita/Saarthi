@@ -43,7 +43,7 @@ export default function AssessmentsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-headline">Self-Assessments</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-headline">Self-Assessments</h1>
         <p className="text-muted-foreground">
           These tools can help you understand your feelings, but they are not a substitute for a professional diagnosis.
         </p>

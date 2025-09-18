@@ -35,7 +35,7 @@ export default function TherapistsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-headline">Find Support</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-headline">Find Support</h1>
         <p className="text-muted-foreground mt-2 max-w-3xl">
           You are not alone. Choose the pathway to support that feels right for you. Whether you need immediate help, anonymous guidance, or specialized therapy, we're here to connect you.
         </p>

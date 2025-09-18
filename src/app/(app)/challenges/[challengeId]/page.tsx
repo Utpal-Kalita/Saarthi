@@ -16,12 +16,12 @@ export default function ChallengeDetailPage({ params }: { params: { challengeId:
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <header>
-        <div className="flex items-center gap-3 mb-2">
+        <div className="flex items-start md:items-center gap-3 mb-2 flex-col md:flex-row">
           <div className="p-2 bg-muted rounded-full">
             <challenge.icon className="h-8 w-8 text-primary" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight font-headline">{challenge.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-headline">{challenge.title}</h1>
             <p className="text-muted-foreground mt-1">{challenge.description}</p>
           </div>
         </div>

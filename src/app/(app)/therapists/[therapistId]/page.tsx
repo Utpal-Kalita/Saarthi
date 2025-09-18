@@ -20,9 +20,9 @@ export default function TherapistProfilePage({ params }: { params: { therapistId
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Header Section */}
-      <header className="flex flex-col md:flex-row items-start gap-6">
+      <header className="flex flex-col md:flex-row items-center md:items-start gap-6">
         {image && (
-          <div className="relative w-40 h-40 rounded-full overflow-hidden border-4 border-primary/20 shrink-0">
+          <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-primary/20 shrink-0">
             <Image
               src={image.imageUrl}
               alt={`Profile of ${therapist.name}`}
@@ -32,9 +32,9 @@ export default function TherapistProfilePage({ params }: { params: { therapistId
             />
           </div>
         )}
-        <div className="pt-4">
-          <h1 className="text-4xl font-bold tracking-tight font-headline">{therapist.name}</h1>
-          <p className="text-xl text-muted-foreground">{therapist.title}</p>
+        <div className="pt-4 text-center md:text-left">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">{therapist.name}</h1>
+          <p className="text-lg md:text-xl text-muted-foreground">{therapist.title}</p>
         </div>
       </header>
 
