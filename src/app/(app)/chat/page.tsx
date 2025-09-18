@@ -40,7 +40,54 @@ export default function ChatPage() {
     }
   };
 
-  const handleToggleLiveTalk = () => {
+  const getPermissionsAndStartStream = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      toast({
+        variant: "destructive",
+        title: "Feature Not Supported",
+        description: "Your browser does not support camera or microphone access.",
+      });
+      setIsLiveTalkActive(false);
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: true, 
+        audio: true 
+      });
+      streamRef.current = stream;
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play().catch(e => console.error("Video play failed:", e));
+      }
+      
+      setHasCameraPermission(true);
+      setHasMicPermission(true);
+      setPermissionsDenied(false);
+      
+    } catch (error) {
+      console.error("Error accessing media devices:", error);
+      if (error instanceof Error && (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError')) {
+        setPermissionsDenied(true);
+      } else if (error instanceof Error) {
+         toast({
+            variant: "destructive",
+            title: "Could not start video source",
+            description: "Please make sure your camera is not being used by another application and try again.",
+        });
+      }
+      
+      stopMediaTracks();
+      setIsLiveTalkActive(false);
+      setHasCameraPermission(false);
+      setHasMicPermission(false);
+    }
+  };
+
+
+  const handleToggleLiveTalk = async () => {
     if (isLiveTalkActive) {
       stopMediaTracks();
       setIsLiveTalkActive(false);
@@ -48,60 +95,25 @@ export default function ChatPage() {
       setHasMicPermission(false);
     } else {
       setPermissionsDenied(false); // Reset denial state on new attempt
-      setIsLiveTalkActive(true); // This will trigger the useEffect
+      setIsLiveTalkActive(true);
+      // We now request permission *after* setting state, which triggers the render
+      // of the video element, making it available.
     }
   };
 
   useEffect(() => {
-    if (!isLiveTalkActive) {
-      return;
+    if (isLiveTalkActive) {
+      getPermissionsAndStartStream();
     }
-
-    const getPermissions = async () => {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        toast({
-          variant: "destructive",
-          title: "Feature Not Supported",
-          description: "Your browser does not support camera or microphone access.",
-        });
-        setIsLiveTalkActive(false);
-        return;
-      }
-
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-          video: true, 
-          audio: true 
-        });
-        streamRef.current = stream;
-
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.play().catch(e => console.error("Video play failed:", e));
-        }
-        
-        setHasCameraPermission(true);
-        setHasMicPermission(true);
-        setPermissionsDenied(false);
-        
-      } catch (error) {
-        console.error("Error accessing media devices:", error);
-        if (error instanceof Error && (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError')) {
-          setPermissionsDenied(true);
-        }
-        stopMediaTracks();
-        setIsLiveTalkActive(false);
-        setHasCameraPermission(false);
-        setHasMicPermission(false);
-      }
-    };
-
-    getPermissions();
-
+    
     return () => {
-      stopMediaTracks();
+      // Cleanup function to stop tracks when component unmounts or isLiveTalkActive becomes false
+      if (isLiveTalkActive) {
+         stopMediaTracks();
+      }
     };
-  }, [isLiveTalkActive, toast]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLiveTalkActive]);
   
   // Simulate emotion detection
   useEffect(() => {
